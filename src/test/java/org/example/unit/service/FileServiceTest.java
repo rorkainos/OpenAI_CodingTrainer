@@ -24,7 +24,7 @@ public class FileServiceTest {
     @Test
     public void testCustomBaseDirectoryPassed(){
         try{
-            String filePath = System.getProperty("user.home") + "/Desktop/";
+            String filePath = "";
             FileService fileService = new FileService(filePath);
         }catch (IllegalArgumentException e){
             fail(e.getMessage());
