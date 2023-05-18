@@ -24,8 +24,7 @@ public class FileServiceTest {
     @Test
     public void testCustomBaseDirectoryPassed(){
         try{
-            String filePath = "";
-            FileService fileService = new FileService(filePath);
+            FileService fileService = new FileService("");
         }catch (IllegalArgumentException e){
             fail(e.getMessage());
         }
@@ -47,7 +46,6 @@ public class FileServiceTest {
         final String relativeFilePath = "test1234";
         final String fileType = "txt";
         final String fileName = relativeFilePath + "." + fileType;
-        //final String filePath = System.getProperty("user.home") + "/Desktop/";
 
         final FileService fileService = new FileService("");
         final File textFile = fileService.createFile(relativeFilePath, fileType);
