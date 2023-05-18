@@ -66,7 +66,7 @@ public class FileServiceTest {
         final String fileName = "test12345";
         final String fileType = "txt";
 
-        final FileService fileService = new FileService();
+        final FileService fileService = new FileService("");
         final File textFile = fileService.createFile(fileName, fileType);
 
         try{
