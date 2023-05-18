@@ -1,7 +1,6 @@
 package org.example.unit.service;
 
 
-import org.example.ReadPropertyFile;
 import org.example.exceptions.DuplicatedFileException;
 import org.example.service.FileService;
 import org.junit.Test;
@@ -23,46 +22,64 @@ import static org.junit.Assert.*;
 public class FileServiceTest {
 
     @Test
-    public void testRetrieveBaseURL(){
+    public void testCustomBaseDirectoryPassed(){
         try{
-            FileService fileService = new FileService();
-        }catch (IOException e){
-            fail("Could not get base url from properties.properties file: " +  e.getMessage());
+            String filePath = System.getProperty("user.home") + "/Desktop/";
+            FileService fileService = new FileService(filePath);
+        }catch (IllegalArgumentException e){
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testCustomBaseDirectoryFailed(){
+        try{
+            String filePath = "dcdcadac";
+            FileService fileService = new FileService(filePath);
+            fail("Illegal Argument exception should have been thrown !");
+        }catch (IllegalArgumentException e){
+           // Pass
         }
     }
 
    @Test
     public void testTextFileCreation() throws IOException, DuplicatedFileException {
-        final String relativeFilePath = "test";
+        final String relativeFilePath = "test1234";
         final String fileType = "txt";
         final String fileName = relativeFilePath + "." + fileType;
+        final String filePath = System.getProperty("user.home") + "/Desktop/";
 
-        final FileService fileService = new FileService();
+        final FileService fileService = new FileService(filePath);
         final File textFile = fileService.createFile(relativeFilePath, fileType);
-        final String filePath = ReadPropertyFile.getProjectBasePath() + fileName;
 
-        assertNotNull(textFile);
-        assertTrue(textFile.isFile());
-        assertEquals(fileName, textFile.getName());
-        assertEquals(filePath, textFile.getAbsolutePath());
-
-        // clean up
-        textFile.delete();
+        try{
+            assertNotNull(textFile);
+            assertTrue(textFile.isFile());
+            assertEquals(fileName, textFile.getName());
+            assertEquals(filePath + fileName, textFile.getAbsolutePath());
+        }finally {
+            // Clean up
+            if (textFile != null && textFile.exists())
+                textFile.delete();
+        }
     }
 
     @Test
     public void testDuplicatedFileExceptionThrown() throws IOException, DuplicatedFileException {
-        final String relativeFilePath = "test";
+        final String fileName = "test12345";
         final String fileType = "txt";
 
         final FileService fileService = new FileService();
-        final File textFile = fileService.createFile(relativeFilePath,fileType);
+        final File textFile = fileService.createFile(fileName, fileType);
 
-        assertThrows(DuplicatedFileException.class, () -> {
-            fileService.createFile(relativeFilePath, fileType);
-        });
-
-        // clean up
-        textFile.delete();
+        try{
+            assertThrows(DuplicatedFileException.class, () -> {
+                fileService.createFile(fileName, fileType);
+            });
+        }finally {
+            // Clean up
+            if (textFile != null && textFile.exists())
+                textFile.delete();
+        }
     }
 }
