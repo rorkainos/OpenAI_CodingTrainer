@@ -1,0 +1,60 @@
+Sure, here's an example:
+
+Incorrect code:
+
+```javascript
+// server.js
+
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+app.listen(3000, () => {
+  console.log('Server started on port 3000');
+});
+```
+
+The bug in this code is that the route handler for the root path (`/`) is not returning a response with the correct content type. Instead of setting the `Content-Type` header to `text/html`, it is using the default content type of `text/plain`.
+
+To write a failing unit test for this bug, we can use the `supertest` library to make a request to the server and check the response headers:
+
+```javascript
+// server.test.js
+
+const request = require('supertest');
+const app = require('./server');
+
+describe('GET /', () => {
+  it('should return HTML content', async () => {
+    const response = await request(app).get('/');
+    expect(response.status).toBe(200);
+    expect(response.headers['content-type']).toMatch(/text\/html/);
+  });
+});
+```
+
+When we run this test, it will fail because the `Content-Type` header of the response is `text/plain` instead of `text/html`.
+
+To fix the bug, we can set the `Content-Type` header to `text/html` in the route handler:
+
+```javascript
+// server.js
+
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  res.set('Content-Type', 'text/html');
+  res.send('Hello World!');
+});
+
+app.listen(3000, () => {
+  console.log('Server started on port 3000');
+});
+
+```
+
+Now when we run the test, it should pass because the response has the correct `Content-Type` header.
