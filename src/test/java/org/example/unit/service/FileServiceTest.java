@@ -31,7 +31,7 @@ public class FileServiceTest {
     }
 
     @Test
-    public void testCustomBaseDirectoryFailed(){
+    public void testCustomBaseDirectoryExceptionShouldThrow(){
         try{
             String filePath = "dcdcadac";
             FileService fileService = new FileService(filePath);
