@@ -1,3 +1,7 @@
+Assistant is an intelligent chatbot designed to help users create programming training materials
+--------------------------------------------------
+Could you please provide me with incorrect code in Node.js, followed by a corresponding unit test that will fail due to the introduced bug? At the end provide the corrected code. Area of interest is web development.
+--------------------------------------------------
 Sure, here's an example:
 
 Incorrect code:
@@ -17,9 +21,9 @@ app.listen(3000, () => {
 });
 ```
 
-The bug in this code is that the route handler for the root path (`/`) is not returning a response with the correct content type. Instead of setting the `Content-Type` header to `text/html`, it is using the default content type of `text/plain`.
+The bug in this code is that the response is not being sent as JSON, which is required by the client.
 
-To write a failing unit test for this bug, we can use the `supertest` library to make a request to the server and check the response headers:
+Unit test that will fail due to the bug:
 
 ```javascript
 // server.test.js
@@ -28,17 +32,22 @@ const request = require('supertest');
 const app = require('./server');
 
 describe('GET /', () => {
-  it('should return HTML content', async () => {
-    const response = await request(app).get('/');
-    expect(response.status).toBe(200);
-    expect(response.headers['content-type']).toMatch(/text\/html/);
+  it('responds with JSON', (done) => {
+    request(app)
+      .get('/')
+      .expect('Content-Type', /json/)
+      .expect(200, { message: 'Hello World!' }, done);
   });
 });
 ```
 
-When we run this test, it will fail because the `Content-Type` header of the response is `text/plain` instead of `text/html`.
+When you run this test, it will fail with the following error message:
 
-To fix the bug, we can set the `Content-Type` header to `text/html` in the route handler:
+```
+Expected "Content-Type" header field to have value /json/, but got "text/html; charset=utf-8"
+```
+
+Corrected code:
 
 ```javascript
 // server.js
@@ -47,14 +56,14 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.set('Content-Type', 'text/html');
-  res.send('Hello World!');
+  res.json({ message: 'Hello World!' });
 });
 
 app.listen(3000, () => {
   console.log('Server started on port 3000');
 });
 
+module.exports = app;
 ```
 
-Now when we run the test, it should pass because the response has the correct `Content-Type` header.
+In the corrected code, the response is sent as JSON using the `res.json()` method, which will fix the bug and make the unit test pass.
