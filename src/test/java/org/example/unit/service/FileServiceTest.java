@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.junit.Assert.*;
 
@@ -60,6 +62,28 @@ public class FileServiceTest {
     }
 
     @Test
+    public void testTextFileCreationWithContent() throws IOException, DuplicatedFileException {
+        final String fileName = "test1234.txt";
+        final String fileContent = "Random Text \n random text";
+
+        final FileService fileService = new FileService("");
+        final File textFile = fileService.createFile(fileName, fileContent);
+
+        try{
+            assertNotNull(textFile);
+            assertTrue(textFile.isFile());
+            assertEquals(fileName, textFile.getName());
+
+            final String contentFromFile = Files.readString(Path.of(fileName));
+            assertEquals(fileContent, contentFromFile);
+        }finally {
+            // Clean up
+            if (textFile != null && textFile.exists())
+                textFile.delete();
+        }
+    }
+
+    @Test
     public void testDuplicatedFileExceptionThrown() throws IOException, DuplicatedFileException {
         final String fileName = "test12345.txt";
 
@@ -70,6 +94,61 @@ public class FileServiceTest {
             assertThrows(DuplicatedFileException.class, () -> {
                 fileService.createFile(fileName, "");
             });
+        }finally {
+            // Clean up
+            if (textFile != null && textFile.exists())
+                textFile.delete();
+        }
+    }
+
+    @Test
+    public void testHTMLFileCreation() throws IOException, DuplicatedFileException {
+        final String fileName = "test1234.html";
+
+        final FileService fileService = new FileService("");
+        final File textFile = fileService.createFile(fileName, "");
+
+        try{
+            assertNotNull(textFile);
+            assertTrue(textFile.isFile());
+            assertEquals(fileName, textFile.getName());
+        }finally {
+            // Clean up
+            if (textFile != null && textFile.exists())
+                textFile.delete();
+        }
+    }
+
+    @Test
+    public void testHTMLFileCreationWithContent() throws IOException, DuplicatedFileException {
+        StringBuilder sb = new StringBuilder();
+        // Start HTML document
+        sb.append("<html>\n");
+        sb.append("<head>\n");
+        sb.append("<title>Generated HTML</title>\n");
+        sb.append("</head>\n");
+        sb.append("<body>\n");
+
+        // Add content to the HTML body
+        sb.append("<h1>Hello, world!</h1>\n");
+        sb.append("<p>This is a generated HTML document.</p>\n");
+
+        // End HTML document
+        sb.append("</body>\n");
+        sb.append("</html>");
+
+        final String fileContent = sb.toString();
+        final String fileName = "test1234.html";
+        final FileService fileService = new FileService("");
+        final File textFile = fileService.createFile(fileName, fileContent);
+
+        try{
+            assertNotNull(textFile);
+            assertTrue(textFile.isFile());
+            assertEquals(fileName, textFile.getName());
+
+            final String contentFromFile = Files.readString(Path.of(fileName));
+            assertEquals(fileContent, contentFromFile);
         }finally {
             // Clean up
             if (textFile != null && textFile.exists())
