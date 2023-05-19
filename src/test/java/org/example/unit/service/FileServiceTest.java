@@ -43,12 +43,10 @@ public class FileServiceTest {
 
    @Test
     public void testTextFileCreation() throws IOException, DuplicatedFileException {
-        final String relativeFilePath = "test1234";
-        final String fileType = "txt";
-        final String fileName = relativeFilePath + "." + fileType;
+        final String fileName = "test1234.txt";
 
         final FileService fileService = new FileService("");
-        final File textFile = fileService.createFile(relativeFilePath, fileType);
+        final File textFile = fileService.createFile(fileName, "");
 
         try{
             assertNotNull(textFile);
@@ -63,15 +61,14 @@ public class FileServiceTest {
 
     @Test
     public void testDuplicatedFileExceptionThrown() throws IOException, DuplicatedFileException {
-        final String fileName = "test12345";
-        final String fileType = "txt";
+        final String fileName = "test12345.txt";
 
         final FileService fileService = new FileService("");
-        final File textFile = fileService.createFile(fileName, fileType);
+        final File textFile = fileService.createFile(fileName, "");
 
         try{
             assertThrows(DuplicatedFileException.class, () -> {
-                fileService.createFile(fileName, fileType);
+                fileService.createFile(fileName, "");
             });
         }finally {
             // Clean up

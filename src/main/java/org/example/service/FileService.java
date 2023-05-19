@@ -3,6 +3,7 @@ package org.example.service;
 import org.example.exceptions.DuplicatedFileException;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,12 +32,23 @@ public class FileService {
     }
 
 
-    public File createFile(final String fileRelativePath, final String filetype) throws IOException, DuplicatedFileException {
-        final String filePath = baseURL + fileRelativePath + "." + filetype;
-        File file = new File(filePath);
+    public File createFile(final String fileName, final String fileContent) throws IOException, DuplicatedFileException {
+        File file = getNewFile(baseURL + fileName);
+
+        try (FileWriter fileWriter = new FileWriter(file)) {
+            // Write HTML code to the file using the FileWriter instance
+            fileWriter.write(fileContent);
+        }
+
+        return file;
+    }
+
+    private File getNewFile(final String fileAbsolutePathName) throws IOException, DuplicatedFileException {
+
+        File file = new File(fileAbsolutePathName);
 
         if (!file.createNewFile())
-            throw new DuplicatedFileException(filePath);
+            throw new DuplicatedFileException(fileAbsolutePathName);
 
         return file;
     }
