@@ -1,7 +1,12 @@
 # OpenAI_CodingTrainer
 
 ## Before all
-1. Create a file named `.properties` in the `src/main/properties` folder and add your apiKey from Azure's OpenAI.
+1. Create a file named `.properties` in the `src/main/properties` folder and add your apiKey, deploymentName and endpoint from Azure's OpenAI.
+Use the following format:
+`apiKey=exampleApiKey
+deploymentName=exampleDeployment
+endpoint=exampleEndpoint`
+
 
 ## Compiling the code
 
