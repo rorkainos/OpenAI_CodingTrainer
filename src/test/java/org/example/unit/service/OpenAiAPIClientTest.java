@@ -1,7 +1,8 @@
-package org.example.service;
+package org.example.unit.service;
 
 import org.example.exceptions.InvalidPromptException;
 import org.example.exceptions.PropertyNotFoundException;
+import org.example.service.OpenAiAPIClient;
 import org.junit.Test;
 
 import java.io.IOException;
