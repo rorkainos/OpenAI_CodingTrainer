@@ -36,7 +36,7 @@ public final class FileService {
         Path directory = Paths.get(baseDirectory);
 
         if (!(Files.exists(directory) && Files.isDirectory(directory)))
-            throw new IllegalArgumentException("Director doesn't exist: " + baseDirectory);
+            throw new IllegalArgumentException("Directory doesn't exist: " + baseDirectory);
 
         this.baseURL = baseDirectory;
         this.rootFolder = createFolder(rootFolderName);
