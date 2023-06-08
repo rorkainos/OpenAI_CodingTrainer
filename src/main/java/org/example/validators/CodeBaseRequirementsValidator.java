@@ -1,16 +1,25 @@
-package org.example.Builder;
+package org.example.validators;
 
+import org.example.models.UserLearningRequirement;
+
+/*
+* to be implemented by connor
+*/
 public class CodeBaseRequirementsValidator {
 
-    public boolean validateReadMeTopics(final String readMeTopics){
-        return false;
+    public AzureValidation validateReadMeTopics(final String readMeTopics){
+        // node.js
+
+        return new AzureValidation(false, "needs implemented");
     }
 
-    public boolean validateLanguage(final String language){
-        return false;
+    public AzureValidation validateLanguage(final String language){
+        // call azure endpoint to validate
+        return new AzureValidation(false, "needs implemented");
     }
 
-    public boolean validateUserLearningRequirement(final UserLearningRequirement userLearningRequirement){
-        return false;
+    public AzureValidation validateUserLearningRequirement(final UserLearningRequirement userLearningRequirement){
+        // call azure endpoint to validate
+        return new AzureValidation(false, "needs implemented");
     }
 }
