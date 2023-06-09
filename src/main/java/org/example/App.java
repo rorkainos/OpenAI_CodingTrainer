@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.Builder.CodeBaseBuilder;
 import org.example.Builder.UserRequirementJsonBuilder;
 import org.example.models.CodeBaseRequirements;
 import org.example.models.LearningLevel;
@@ -51,9 +52,8 @@ public class App
             System.out.println("\n Please enter valid topics or type no to escape  \n");
         }
 
-        System.out.println("Thank you for specifying your requirements please wait while we build your code base ");
-        CodeBaseRequirements codeBaseRequirements = jsonBuilder.build();
-
         // generate code base using codeBaseRequirements
+        CodeBaseBuilder programBuilder = new CodeBaseBuilder(jsonBuilder.build());
+        programBuilder.build();
     }
 }
