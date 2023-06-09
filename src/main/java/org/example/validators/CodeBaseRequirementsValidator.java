@@ -18,6 +18,16 @@ public class CodeBaseRequirementsValidator {
         return new AzureValidation(false, "needs implemented");
     }
 
+    public AzureValidation validateLearningLevelContext(final String context){
+        // call azure endpoint to validate
+        return new AzureValidation(false, "needs implemented");
+    }
+
+    public AzureValidation validateLearningLevel(final String learningLevelNumber){
+        // call azure endpoint to validate
+        return new AzureValidation(false, "needs implemented");
+    }
+
     public AzureValidation validateUserLearningRequirement(final UserLearningRequirement userLearningRequirement){
         // call azure endpoint to validate
         return new AzureValidation(false, "needs implemented");

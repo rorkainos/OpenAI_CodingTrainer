@@ -8,20 +8,37 @@ package org.example.models;
 *  rorourke
 */
 public enum LearningLevel {
-    DEPENDENCY_MANAGEMENT("Learn How To Install And Manage Dependencies"),
-    UNIT("Learn Unit Testing"),
-    INTEGRATION("Learn Integration Testing"),
-    CLOUD("Learn Cloud Integration"),
-    SECURITY("Learn Basic Security Practices"),
-    AI("Learn AI Integration");
+    DEPENDENCY_MANAGEMENT("Learn How To Install And Manage Dependencies", 1),
+    UNIT("Learn Unit Testing", 2),
+    INTEGRATION("Learn Integration Testing", 3),
+    CLOUD("Learn Cloud Integration", 4),
+    SECURITY("Learn Basic Security Practices", 5),
+    AI("Learn AI Integration", 6);
 
     private final String value;
+    private final int number;
 
-    private LearningLevel(String value) {
+    private LearningLevel(String value, int number) {
         this.value = value;
+        this.number = number;
     }
 
     public String getValue() {
         return value;
+    }
+    public int getNumber(){return number;}
+
+    @Override
+    public String toString() {
+        return "Number: " + number + "\nValue: " + value + "\n";
+    }
+
+    public static LearningLevel fromNumber(int number) {
+        for (LearningLevel level : LearningLevel.values()) {
+            if (level.getNumber() == number) {
+                return level;
+            }
+        }
+        return null; // or throw an exception if desired
     }
 }
