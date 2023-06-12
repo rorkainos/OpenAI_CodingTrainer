@@ -1,6 +1,7 @@
 package org.example.unit.service;
 
 
+import org.example.DataGeneration.GenerateFiles;
 import org.example.exceptions.DuplicatedFileException;
 import org.example.service.FileService;
 import org.junit.Test;
@@ -9,275 +10,183 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
 
 /*
 * Testing the FileService class
 *
-*  Test Coverage
-*
-*  1. Creating an instance of the service works thus setting the base url correctly
-*  2. Testing that a basic txt file can be created
-*  3. Testing that DuplicatedFileException is thrown when the same file is thrown twice.
+* Test Coverage
+* 1. creating the root directory
+* 2. creating a sub folder in the root directory
+* 3. creating a file in the root directory
+* 4. creating two sub folders in the root directory
+* 5. creating a file in each of the two sub Directories
+* 6. custom name can be set for the default path of the directory which is the desktop
+* 6. custom name of the root dir and custom path of the dir can be passed to the service
 */
 public class FileServiceTest {
 
     @Test
-    public void testCustomBaseDirectoryPassed(){
+    public void testDefaultCallOfFileService_ParentDirectoryMade() {
         try{
-            FileService fileService = new FileService("");
-        }catch (IllegalArgumentException e){
-            fail(e.getMessage());
+            FileService fileService = new FileService();
+            fileService.setParentFolderForDeletion();
+            Path directory = Paths.get(FileService.DEFAULT_BASE_PATH + "/" + FileService.DEFAULT_ROOT_FOLDER_NAME) ;
+            assertTrue(Files.exists(directory));
+            assertTrue(Files.isDirectory(directory));
+        }catch (IOException e) {
+            fail("failed to created root test folder");
         }
     }
 
     @Test
-    public void testCustomBaseDirectoryExceptionShouldThrow(){
-        try{
-            String filePath = "dcdcadac";
-            FileService fileService = new FileService(filePath);
-            fail("Illegal Argument exception should have been thrown !");
-        }catch (IllegalArgumentException e){
-           // Pass
-        }
-    }
-
-   @Test
-    public void testTextFileCreation() throws IOException, DuplicatedFileException {
-        final String fileName = "test1234.txt";
-
-        final FileService fileService = new FileService("");
-        final File textFile = fileService.createFile(fileName, "");
+    public void testDefaultPath_CustomFolderNameCreated(){
+        final String filename = "testDefaultPath_CustomFolderNameCreated";
 
         try{
-            assertNotNull(textFile);
-            assertTrue(textFile.isFile());
-            assertEquals(fileName, textFile.getName());
-        }finally {
-            // Clean up
-            if (textFile != null && textFile.exists())
-                textFile.delete();
+            FileService fileService = new FileService(filename);
+
+            // as this is a test we want this for cleanup
+            fileService.setParentFolderForDeletion();
+            Path directory = Paths.get(FileService.DEFAULT_BASE_PATH + "/" + filename) ;
+            assertTrue(Files.exists(directory));
+            assertTrue(Files.isDirectory(directory));
+        }catch (IOException e) {
+            fail("failed to create root folder with custom name");
         }
     }
 
     @Test
-    public void testTextFileCreationWithContent() throws IOException, DuplicatedFileException {
-        final String fileName = "test1234.txt";
-        final String fileContent = "Random Text \n random text";
-
-        final FileService fileService = new FileService("");
-        final File textFile = fileService.createFile(fileName, fileContent);
+    public void testCustomBasePath_CustomFolderNameCreated(){
+        final String filename = "testCustomBasePath_CustomFolderNameCreated";
+        final String customFolderPath = "";
 
         try{
-            assertNotNull(textFile);
-            assertTrue(textFile.isFile());
-            assertEquals(fileName, textFile.getName());
+            FileService fileService = new FileService(customFolderPath, filename);
 
-            final String contentFromFile = Files.readString(Path.of(fileName));
-            assertEquals(fileContent, contentFromFile);
-        }finally {
-            // Clean up
-            if (textFile != null && textFile.exists())
-                textFile.delete();
+            // as this is a test we want this for cleanup
+            fileService.setParentFolderForDeletion();
+            Path directory = Paths.get(customFolderPath + filename) ;
+            assertTrue(Files.exists(directory));
+            assertTrue(Files.isDirectory(directory));
+        }catch (IOException e) {
+            fail("failed to create root folder with custom name");
         }
     }
 
     @Test
-    public void testDuplicatedFileExceptionThrown() throws IOException, DuplicatedFileException {
-        final String fileName = "test12345.txt";
+    public void testParentDir_FileCanBePlaced() throws IOException {
+        final FileService fileService = new FileService("testParentDir_FileCanBePlaced");
+        fileService.setParentFolderForDeletion();
 
-        final FileService fileService = new FileService("");
-        final File textFile = fileService.createFile(fileName, "");
+        final File rootFolder = fileService.getRootFolder();
+        final String fileToBePlacedInFolder = "TestFileName.js";
 
-        try{
-            assertThrows(DuplicatedFileException.class, () -> {
-                fileService.createFile(fileName, "");
-            });
-        }finally {
-            // Clean up
-            if (textFile != null && textFile.exists())
-                textFile.delete();
-        }
+        File file = fileService.createFileInFolder(rootFolder, fileToBePlacedInFolder, GenerateFiles.createJSFileString());
+        file.deleteOnExit();
+
+        assertTrue(rootFolder.exists());
+        assertTrue(rootFolder.isDirectory());
+
+        assertTrue(file.exists());
+        assertEquals(fileToBePlacedInFolder, file.getName());
+        assertEquals(rootFolder.getAbsolutePath(), file.getParentFile().getAbsolutePath());
+
     }
 
     @Test
-    public void testHTMLFileCreation() throws IOException, DuplicatedFileException {
-        final String fileName = "test1234.html";
+    public void testParentFolder_SubFolderCreated() throws IOException {
+        final FileService fileService = new FileService("testParentFolder_SubFolderCreated");
+        fileService.setParentFolderForDeletion();
 
-        final FileService fileService = new FileService("");
-        final File textFile = fileService.createFile(fileName, "");
+        final File rootFolder = fileService.getRootFolder();
+        final String subFolderName = "subFolder";
 
-        try{
-            assertNotNull(textFile);
-            assertTrue(textFile.isFile());
-            assertEquals(fileName, textFile.getName());
-        }finally {
-            // Clean up
-            if (textFile != null && textFile.exists())
-                textFile.delete();
-        }
+        File subFolder = fileService.createSubFolder(rootFolder, subFolderName);
+        subFolder.deleteOnExit();
+
+        assertTrue(subFolder.exists());
+        assertTrue(subFolder.isDirectory());
+        assertEquals(rootFolder.getAbsolutePath(), subFolder.getParentFile().getAbsolutePath());
     }
 
     @Test
-    public void testHTMLFileCreationWithContent() throws IOException, DuplicatedFileException {
-        StringBuilder sb = new StringBuilder();
-        // Start HTML document
-        sb.append("<html>\n");
-        sb.append("<head>\n");
-        sb.append("<title>Generated HTML</title>\n");
-        sb.append("</head>\n");
-        sb.append("<body>\n");
+    public void testParentFolder_TwoSubFoldersCreated() throws IOException {
+        final FileService fileService = new FileService("testParentFolder_TwoSubFoldersCreated");
+        fileService.setParentFolderForDeletion();
 
-        // Add content to the HTML body
-        sb.append("<h1>Hello, world!</h1>\n");
-        sb.append("<p>This is a generated HTML document.</p>\n");
+        final File rootFolder = fileService.getRootFolder();
+        final String subFolderNameOne = "subFolder1";
+        final String subFolderNameTwo = "subFolder2";
 
-        // End HTML document
-        sb.append("</body>\n");
-        sb.append("</html>");
+        File subFolderOne = fileService.createSubFolder(rootFolder, subFolderNameOne);
+        subFolderOne.deleteOnExit();
 
-        final String fileContent = sb.toString();
-        final String fileName = "test1234.html";
-        final FileService fileService = new FileService("");
-        final File textFile = fileService.createFile(fileName, fileContent);
+        File subFolderTwo = fileService.createSubFolder(rootFolder, subFolderNameTwo);
+        subFolderTwo.deleteOnExit();
 
-        try{
-            assertNotNull(textFile);
-            assertTrue(textFile.isFile());
-            assertEquals(fileName, textFile.getName());
+        assertTrue(subFolderOne.exists());
+        assertTrue(subFolderOne.isDirectory());
+        assertEquals(rootFolder.getAbsolutePath(), subFolderOne.getParentFile().getAbsolutePath());
 
-            final String contentFromFile = Files.readString(Path.of(fileName));
-            assertEquals(fileContent, contentFromFile);
-        }finally {
-            // Clean up
-            if (textFile != null && textFile.exists())
-                textFile.delete();
-        }
+        assertTrue(subFolderTwo.exists());
+        assertTrue(subFolderTwo.isDirectory());
+        assertEquals(rootFolder.getAbsolutePath(), subFolderTwo.getParentFile().getAbsolutePath());
     }
 
     @Test
-    public void testCssFileCreation() throws IOException, DuplicatedFileException {
-        final String fileName = "test1234.css";
+    public void testSubFolder_FileCanBePlaced() throws IOException {
+        final FileService fileService = new FileService("testSubFolder_FileCanBePlaced");
+        fileService.setParentFolderForDeletion();
 
-        final FileService fileService = new FileService("");
-        final File cssFile = fileService.createFile(fileName, "");
+        final String subFolderName = "subfolder";
+        final String fileToBePlacedInFolder = "TestFileName.js";
 
-        try {
-            assertNotNull(cssFile);
-            assertTrue(cssFile.isFile());
-            assertEquals(fileName, cssFile.getName());
-        } finally {
-            // Clean up
-            if (cssFile != null && cssFile.exists())
-                cssFile.delete();
-        }
+        File subFolder = fileService.createSubFolder(fileService.getRootFolder(), subFolderName);
+        subFolder.deleteOnExit();
+
+        File file = fileService.createFileInFolder(subFolder, fileToBePlacedInFolder, GenerateFiles.createJSFileString());
+        file.deleteOnExit();
+
+        assertTrue(subFolder.exists());
+        assertTrue(subFolder.isDirectory());
+
+        assertTrue(file.exists());
+        assertEquals(fileToBePlacedInFolder, file.getName());
+        assertEquals(subFolder.getAbsolutePath(), file.getParentFile().getAbsolutePath());
     }
 
-    @Test
-    public void testCssFileCreationWithContent() throws IOException, DuplicatedFileException {
-        final String fileContent = "body { color: blue; }";
-        final String fileName = "test1234.css";
-
-        final FileService fileService = new FileService("");
-        final File cssFile = fileService.createFile(fileName, fileContent);
-
-        try {
-            assertNotNull(cssFile);
-            assertTrue(cssFile.isFile());
-            assertEquals(fileName, cssFile.getName());
-
-            final String contentFromFile = Files.readString(cssFile.toPath());
-            assertEquals(fileContent, contentFromFile);
-        } finally {
-            // Clean up
-            if (cssFile != null && cssFile.exists())
-                cssFile.delete();
-        }
-    }
 
     @Test
-    public void testJsonFileCreation() throws IOException, DuplicatedFileException {
-        final String fileName = "test1234.json";
+    public void testTwoSubFolder_FilesCanBePlaced() throws IOException {
+        final FileService fileService = new FileService("testTwoSubFolder_FilesCanBePlaced");
+        fileService.setParentFolderForDeletion();
 
-        final FileService fileService = new FileService("");
-        final File jsonFile = fileService.createFile(fileName, "");
+        final String subFolderNameOne = "subfolderOne";
+        final String subFolderNameTwo = "subfolderTwo";
+        final String fileOneName = "TestFileNameOne.js";
+        final String fileTwoName = "TestFileNameTwo.js";
 
-        try {
-            assertNotNull(jsonFile);
-            assertTrue(jsonFile.isFile());
-            assertEquals(fileName, jsonFile.getName());
-        } finally {
-            // Clean up
-            if (jsonFile != null && jsonFile.exists())
-                jsonFile.delete();
-        }
-    }
+        File subFolderOne = fileService.createSubFolder(fileService.getRootFolder(), subFolderNameOne);
+        subFolderOne.deleteOnExit();
 
-    @Test
-    public void testJsonFileCreationWithContent() throws IOException, DuplicatedFileException {
-        final String fileContent = "{ \"key\": \"value\" }";
-        final String fileName = "test1234.json";
+        File subFolderTwo = fileService.createSubFolder(fileService.getRootFolder(), subFolderNameTwo);
+        subFolderTwo.deleteOnExit();
 
-        final FileService fileService = new FileService("");
-        final File jsonFile = fileService.createFile(fileName, fileContent);
+        File fileOne = fileService.createFileInFolder(subFolderOne, fileOneName, GenerateFiles.createJSFileString());
+        fileOne.deleteOnExit();
 
-        try {
-            assertNotNull(jsonFile);
-            assertTrue(jsonFile.isFile());
-            assertEquals(fileName, jsonFile.getName());
+        File fileTwo = fileService.createFileInFolder(subFolderTwo, fileTwoName, GenerateFiles.createJSFileString());
+        fileTwo.deleteOnExit();
 
-            final String contentFromFile = Files.readString(jsonFile.toPath());
-            assertEquals(fileContent, contentFromFile);
-        } finally {
-            // Clean up
-            if (jsonFile != null && jsonFile.exists())
-                jsonFile.delete();
-        }
-    }
+        assertTrue(fileOne.exists());
+        assertEquals(fileOneName, fileOne.getName());
+        assertEquals(subFolderOne.getAbsolutePath(), fileOne.getParentFile().getAbsolutePath());
 
-    @Test
-    public void testJavaScriptFileCreation() throws IOException, DuplicatedFileException {
-        final String fileName = "test1234.js";
-
-        final FileService fileService = new FileService("");
-        final File jsFile = fileService.createFile(fileName, "");
-
-        try {
-            assertNotNull(jsFile);
-            assertTrue(jsFile.isFile());
-            assertEquals(fileName, jsFile.getName());
-        } finally {
-            // Clean up
-            if (jsFile != null && jsFile.exists())
-                jsFile.delete();
-        }
-    }
-
-    @Test
-    public void testJavaScriptFileCreationWithContent() throws IOException, DuplicatedFileException {
-        final String fileContent = "function greet() {\n" +
-                "    console.log('Hello, World!');\n" +
-                "}\n" +
-                "\n" +
-                "greet();";
-
-        final String fileName = "test1234.js";
-
-        final FileService fileService = new FileService("");
-        final File jsFile = fileService.createFile(fileName, fileContent);
-
-        try {
-            assertNotNull(jsFile);
-            assertTrue(jsFile.isFile());
-            assertEquals(fileName, jsFile.getName());
-
-            final String contentFromFile = Files.readString(jsFile.toPath());
-            assertEquals(fileContent, contentFromFile);
-        } finally {
-            // Clean up
-            if (jsFile != null && jsFile.exists())
-                jsFile.delete();
-        }
+        assertTrue(fileTwo.exists());
+        assertEquals(fileTwoName, fileTwo.getName());
+        assertEquals(subFolderTwo.getAbsolutePath(), fileTwo.getParentFile().getAbsolutePath());
     }
 }
