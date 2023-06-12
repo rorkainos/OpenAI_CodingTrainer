@@ -1,5 +1,6 @@
 package org.example.Builder;
 
+import org.example.AzureCaller;
 import org.example.models.CodeBaseRequirements;
 
 /*
@@ -8,9 +9,11 @@ import org.example.models.CodeBaseRequirements;
 */
 public class CodeBaseBuilder {
     private CodeBaseRequirements codeBaseRequirements;
+    private AzureCaller aiCaller;
 
-    public CodeBaseBuilder(CodeBaseRequirements codeBaseRequirements) {
+    public CodeBaseBuilder(CodeBaseRequirements codeBaseRequirements, AzureCaller aiCaller) {
         this.codeBaseRequirements = codeBaseRequirements;
+        this.aiCaller = aiCaller;
     }
 
     public void build(){

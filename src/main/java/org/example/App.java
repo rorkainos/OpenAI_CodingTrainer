@@ -2,43 +2,42 @@ package org.example;
 
 import org.example.Builder.CodeBaseBuilder;
 import org.example.Builder.UserRequirementJsonBuilder;
-import org.example.models.CodeBaseRequirements;
-import org.example.models.LearningLevel;
 import org.example.validators.CodeBaseRequirementsValidator;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class App 
 {
     public static void main( String[] args )
     {
+        AzureCaller aiCaller = new AzureCaller();
         UserRequirementJsonBuilder jsonBuilder = new UserRequirementJsonBuilder(new CodeBaseRequirementsValidator());
-        System.out.println("Description of Program... ");
-        System.out.println("What Software Language would you like to learn today ");
 
+        // ---- language ---------
+        System.out.println("What Software Language would you like to learn today ");
         Scanner scanner = new Scanner(System.in);
         while (!jsonBuilder.setLanguage(scanner.nextLine())) {
             System.out.println("\n Please enter a valid language.... \n");
         }
 
-        System.out.println("From the list below select what learning level you would like proceed with.");
-        System.out.println("( Context surrounding this level with be asked for after )");
+        // ---- topic ---------
+        List<String> topics = aiCaller.getListOfTopics(jsonBuilder.getLanguage());
+        for(int i = 0; i< topics.size(); i++)
+            System.out.println(i + " : " + topics.get(i));
 
-        for (LearningLevel level : LearningLevel.values()) {
-            System.out.println(level);
+        System.out.println("From the list below select what topic you would like to upskill in. Please select a number");
+        int topicElement = Integer.parseInt(scanner.nextLine());
+        jsonBuilder.setLanguageTopic(topics.get(topicElement));
+
+        // ---- experience with topic ---------
+        System.out.println("What current experience do you have with this topic. If none please say");
+
+        while (!jsonBuilder.setLanguageTopicCurrentExperience(scanner.nextLine())) {
+            System.out.println("\n Please enter a valid current experience \n");
         }
 
-        while (!jsonBuilder.setLearningLevel(scanner.nextLine())) {
-            System.out.println("\n Please enter a valid number.... \n");
-        }
-
-        System.out.println("Please select the context around the learning level you have chosen.");
-        System.out.println("This will be validated to see if it is achievable");
-
-        while (!jsonBuilder.setLearningLevelContext(scanner.nextLine())) {
-            System.out.println("\n Please enter a valid context.... \n");
-        }
-
+        // ---- read me topics ---------
         System.out.println("Finally would you like any helpful ReadMe documentation, type no if not");
         System.out.println("If so please specify topics to cover.");
         System.out.println("Each topic should be separated by a comma");
@@ -48,7 +47,7 @@ public class App
         }
 
         // generate code base using codeBaseRequirements
-        CodeBaseBuilder programBuilder = new CodeBaseBuilder(jsonBuilder.build());
+        CodeBaseBuilder programBuilder = new CodeBaseBuilder(jsonBuilder.build(), aiCaller);
         programBuilder.build();
     }
 }

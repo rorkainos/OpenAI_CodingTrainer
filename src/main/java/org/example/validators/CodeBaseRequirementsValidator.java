@@ -1,7 +1,5 @@
 package org.example.validators;
 
-import org.example.models.UserLearningRequirement;
-
 /*
 * to be implemented by connor
 */
@@ -14,16 +12,10 @@ public class CodeBaseRequirementsValidator {
     }
 
     public AzureValidation validateLanguage(final String language){
-        // call azure endpoint to validate
         return new AzureValidation(true, "needs implemented");
     }
 
-    public AzureValidation validateLearningLevelContext(final String context){
-        // call azure endpoint to validate
-        return new AzureValidation(true, "needs implemented");
-    }
-
-    public AzureValidation validateLearningLevel(final String learningLevelNumber){
+    public AzureValidation validateLanguageCurrentExperience(final String language, final String topic, final String context){
         // call azure endpoint to validate
         return new AzureValidation(true, "needs implemented");
     }

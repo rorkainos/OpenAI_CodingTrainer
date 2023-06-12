@@ -1,8 +1,6 @@
 package org.example.Builder;
 
 import org.example.models.CodeBaseRequirements;
-import org.example.models.LearningLevel;
-import org.example.models.UserLearningRequirement;
 import org.example.validators.AzureValidation;
 import org.example.validators.CodeBaseRequirementsValidator;
 
@@ -15,8 +13,8 @@ import org.example.validators.CodeBaseRequirementsValidator;
 public class UserRequirementJsonBuilder {
 
     private String language;
-    private LearningLevel learningLevel;
-    private String learningLevelContext;
+    private String currentExperience;
+    private String languageTopic;
     private String readMeTopics;
     private final CodeBaseRequirementsValidator codeBaseRequirementsValidator;
     private CodeBaseRequirements codeBaseRequirements;
@@ -25,7 +23,11 @@ public class UserRequirementJsonBuilder {
         this.codeBaseRequirementsValidator = codeBaseRequirementsValidator;
     }
 
-    public boolean setLanguage(String language) {
+    public String getLanguage() {
+        return language;
+    }
+
+    public boolean setLanguage(final String language) {
         AzureValidation validation = codeBaseRequirementsValidator.validateLanguage(language);
 
         if(validation.isPass())
@@ -35,27 +37,22 @@ public class UserRequirementJsonBuilder {
         return validation.isPass();
     }
 
-    public boolean setLearningLevel(final String learningLevelNumber) {
-        AzureValidation validation = codeBaseRequirementsValidator.validateLearningLevel(learningLevelNumber);
-
-        if(validation.isPass())
-            this.learningLevel = LearningLevel.fromNumber(Integer.parseInt(learningLevelNumber));
-
-        System.out.println("Attribute: Learning Level | Validation Result | " + validation.isPass() + " Reason: " + validation.reason());
-        return validation.isPass();
+    public void setLanguageTopic(final String languageTopic) {
+        this.languageTopic = languageTopic;
+        System.out.println("Topic Selected : " + languageTopic);
     }
 
-    public boolean setLearningLevelContext(final String context) {
-        AzureValidation validation = codeBaseRequirementsValidator.validateLearningLevelContext(language);
+    public boolean setLanguageTopicCurrentExperience(final String currentExperience) {
+        AzureValidation validation = codeBaseRequirementsValidator.validateLanguageCurrentExperience(language, languageTopic, currentExperience);
 
         if(validation.isPass())
-            this.learningLevelContext = context;
+            this.currentExperience = currentExperience;
 
         System.out.println("Attribute: Learning Level Context | Validation Result | " + validation.isPass() + " Reason: " + validation.reason());
         return validation.isPass();
     }
 
-    public boolean setReadMeTopics(String readMeTopics) {
+    public boolean setReadMeTopics(final String readMeTopics) {
         AzureValidation validation = codeBaseRequirementsValidator.validateReadMeTopics(readMeTopics);
 
         if (validation.isPass())
@@ -70,11 +67,11 @@ public class UserRequirementJsonBuilder {
         if(codeBaseRequirements != null)
             return this.codeBaseRequirements;
 
-        if(readMeTopics == null && language == null && learningLevel == null && learningLevelContext == null)
+        if(readMeTopics == null && language == null && currentExperience == null && languageTopic == null)
             throw new IllegalStateException("Attributes to create Requirements for code base are not all met");
 
         System.out.println("Creating Code Base Requirements ..... ");
-        this.codeBaseRequirements = new CodeBaseRequirements(language, new UserLearningRequirement(learningLevel, learningLevelContext), readMeTopics);
+        this.codeBaseRequirements = new CodeBaseRequirements(language, languageTopic, currentExperience, readMeTopics);
         return codeBaseRequirements;
     }
 }
