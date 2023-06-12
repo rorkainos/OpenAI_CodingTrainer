@@ -3,8 +3,8 @@ package org.example.Builder;
 import org.example.models.CodeBaseRequirements;
 
 /*
-* class that will service as our class that builds the program.
-* this needs to be extended by florian to call azure
+* class that will serve as our class that builds the code base.
+* this needs to be extended to call azure
 */
 public class CodeBaseBuilder {
     private CodeBaseRequirements codeBaseRequirements;

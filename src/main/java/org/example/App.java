@@ -8,11 +8,6 @@ import org.example.validators.CodeBaseRequirementsValidator;
 
 import java.util.Scanner;
 
-/**
- * A simple command line application that takes user input as an argument
- * and outputs it to the console
- *
- */
 public class App 
 {
     public static void main( String[] args )
