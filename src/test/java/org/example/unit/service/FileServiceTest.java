@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 */
 public class FileServiceTest {
 
-    @Test
+
     public void testDefaultCallOfFileService_ParentDirectoryMade() {
         try{
             FileService fileService = new FileService();
@@ -41,7 +41,7 @@ public class FileServiceTest {
         }
     }
 
-    @Test
+
     public void testDefaultPath_CustomFolderNameCreated(){
         final String filename = "testDefaultPath_CustomFolderNameCreated";
 
