@@ -1,6 +1,8 @@
 package org.example.unit.builder;
 
 import org.example.Builder.UserRequirementJsonBuilder;
+import org.example.exceptions.InvalidPromptException;
+import org.example.exceptions.PropertyNotFoundException;
 import org.example.models.CodeBaseRequirements;
 import org.example.models.LearningLevel;
 import org.example.validators.AzureValidation;
@@ -9,6 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -44,13 +48,13 @@ public class UserRequirementJsonBuilderTest {
     }
 
     @Test
-    public void testSetLanguageFailed(){
+    public void testSetLanguageFailed() throws InvalidPromptException, PropertyNotFoundException, IOException {
         when(codeBaseRequirementsValidator.validateLanguage(any())).thenReturn(new AzureValidation(false, "testing failed validation"));
         assertFalse(userRequirementJsonBuilder.setLanguage("test"));
     }
 
     @Test
-    public void testSetLanguagePassed(){
+    public void testSetLanguagePassed() throws InvalidPromptException, PropertyNotFoundException, IOException {
         when(codeBaseRequirementsValidator.validateLanguage(any())).thenReturn(new AzureValidation(true, "testing validation"));
         assertTrue(userRequirementJsonBuilder.setLanguage("test"));
     }
@@ -80,7 +84,7 @@ public class UserRequirementJsonBuilderTest {
 
 
     @Test
-    public void testBuildSucceeded(){
+    public void testBuildSucceeded() throws InvalidPromptException, PropertyNotFoundException, IOException {
         final String language = "node.js";
         final String readMe = "readMe";
         final LearningLevel learningLevelNumber = LearningLevel.DEPENDENCY_MANAGEMENT;

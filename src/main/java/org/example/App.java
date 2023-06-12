@@ -1,6 +1,7 @@
 package org.example;
 
 
+import org.example.exceptions.PropertyNotFoundException;
 import org.example.service.OpenAiAPIClient;
 
 import org.example.Builder.CodeBaseBuilder;
@@ -9,12 +10,12 @@ import org.example.models.CodeBaseRequirements;
 import org.example.models.LearningLevel;
 import org.example.validators.CodeBaseRequirementsValidator;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class App 
 {
-    public static void main( String[] args )
-    {
+    public static void main( String[] args ) throws PropertyNotFoundException, IOException {
         UserRequirementJsonBuilder jsonBuilder = new UserRequirementJsonBuilder(new CodeBaseRequirementsValidator());
         System.out.println("Description of Program... ");
         System.out.println("What Software Language would you like to learn today ");

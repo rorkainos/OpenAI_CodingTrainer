@@ -1,10 +1,14 @@
 package org.example.Builder;
 
+import org.example.exceptions.InvalidPromptException;
+import org.example.exceptions.PropertyNotFoundException;
 import org.example.models.CodeBaseRequirements;
 import org.example.models.LearningLevel;
 import org.example.models.UserLearningRequirement;
 import org.example.validators.AzureValidation;
 import org.example.validators.CodeBaseRequirementsValidator;
+
+import java.io.IOException;
 
 /*
  * Class that validates and creates the json detailing the structure of what the
@@ -25,7 +29,7 @@ public class UserRequirementJsonBuilder {
         this.codeBaseRequirementsValidator = codeBaseRequirementsValidator;
     }
 
-    public boolean setLanguage(String language) {
+    public boolean setLanguage(String language) throws InvalidPromptException, PropertyNotFoundException, IOException {
         AzureValidation validation = codeBaseRequirementsValidator.validateLanguage(language);
 
         if(validation.isPass())
