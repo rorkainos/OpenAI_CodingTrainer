@@ -1,6 +1,7 @@
 package org.example.Builder;
 
 import org.example.models.CodeBaseRequirements;
+import org.example.models.LearningLevel;
 import org.example.models.UserLearningRequirement;
 import org.example.validators.AzureValidation;
 import org.example.validators.CodeBaseRequirementsValidator;
@@ -14,7 +15,8 @@ import org.example.validators.CodeBaseRequirementsValidator;
 public class UserRequirementJsonBuilder {
 
     private String language;
-    private UserLearningRequirement userLearningRequirement;
+    private LearningLevel learningLevel;
+    private String learningLevelContext;
     private String readMeTopics;
     private final CodeBaseRequirementsValidator codeBaseRequirementsValidator;
     private CodeBaseRequirements codeBaseRequirements;
@@ -33,13 +35,23 @@ public class UserRequirementJsonBuilder {
         return validation.isPass();
     }
 
-    public boolean setUserLearningRequirement(UserLearningRequirement userLearningRequirement) {
-        AzureValidation validation = codeBaseRequirementsValidator.validateUserLearningRequirement(userLearningRequirement);
+    public boolean setLearningLevel(final String learningLevelNumber) {
+        AzureValidation validation = codeBaseRequirementsValidator.validateLearningLevel(learningLevelNumber);
 
         if(validation.isPass())
-            this.userLearningRequirement = userLearningRequirement;
+            this.learningLevel = LearningLevel.fromNumber(Integer.parseInt(learningLevelNumber));
 
-        System.out.println("Attribute: userLearningRequirement | Validation Result | " + validation.isPass() + " Reason: " + validation.reason());
+        System.out.println("Attribute: Learning Level | Validation Result | " + validation.isPass() + " Reason: " + validation.reason());
+        return validation.isPass();
+    }
+
+    public boolean setLearningLevelContext(final String context) {
+        AzureValidation validation = codeBaseRequirementsValidator.validateLearningLevelContext(language);
+
+        if(validation.isPass())
+            this.learningLevelContext = context;
+
+        System.out.println("Attribute: Learning Level Context | Validation Result | " + validation.isPass() + " Reason: " + validation.reason());
         return validation.isPass();
     }
 
@@ -58,11 +70,11 @@ public class UserRequirementJsonBuilder {
         if(codeBaseRequirements != null)
             return this.codeBaseRequirements;
 
-        if(readMeTopics == null && language == null && userLearningRequirement == null)
+        if(readMeTopics == null && language == null && learningLevel == null && learningLevelContext == null)
             throw new IllegalStateException("Attributes to create Requirements for code base are not all met");
 
         System.out.println("Creating Code Base Requirements ..... ");
-        this.codeBaseRequirements = new CodeBaseRequirements(language, userLearningRequirement, readMeTopics);
+        this.codeBaseRequirements = new CodeBaseRequirements(language, new UserLearningRequirement(learningLevel, learningLevelContext), readMeTopics);
         return codeBaseRequirements;
     }
 }
