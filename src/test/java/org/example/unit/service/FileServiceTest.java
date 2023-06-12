@@ -78,7 +78,7 @@ public class FileServiceTest {
 
     @Test
     public void testParentDir_FileCanBePlaced() throws IOException {
-        final FileService fileService = new FileService("testParentDir_FileCanBePlaced");
+        final FileService fileService = new FileService("","testParentDir_FileCanBePlaced");
         fileService.setParentFolderForDeletion();
 
         final File rootFolder = fileService.getRootFolder();
@@ -98,7 +98,7 @@ public class FileServiceTest {
 
     @Test
     public void testParentFolder_SubFolderCreated() throws IOException {
-        final FileService fileService = new FileService("testParentFolder_SubFolderCreated");
+        final FileService fileService = new FileService("","testParentFolder_SubFolderCreated");
         fileService.setParentFolderForDeletion();
 
         final File rootFolder = fileService.getRootFolder();
@@ -114,7 +114,7 @@ public class FileServiceTest {
 
     @Test
     public void testParentFolder_TwoSubFoldersCreated() throws IOException {
-        final FileService fileService = new FileService("testParentFolder_TwoSubFoldersCreated");
+        final FileService fileService = new FileService("","testParentFolder_TwoSubFoldersCreated");
         fileService.setParentFolderForDeletion();
 
         final File rootFolder = fileService.getRootFolder();
@@ -138,7 +138,7 @@ public class FileServiceTest {
 
     @Test
     public void testSubFolder_FileCanBePlaced() throws IOException {
-        final FileService fileService = new FileService("testSubFolder_FileCanBePlaced");
+        final FileService fileService = new FileService("","testSubFolder_FileCanBePlaced");
         fileService.setParentFolderForDeletion();
 
         final String subFolderName = "subfolder";
@@ -161,7 +161,7 @@ public class FileServiceTest {
 
     @Test
     public void testTwoSubFolder_FilesCanBePlaced() throws IOException {
-        final FileService fileService = new FileService("testTwoSubFolder_FilesCanBePlaced");
+        final FileService fileService = new FileService("","testTwoSubFolder_FilesCanBePlaced");
         fileService.setParentFolderForDeletion();
 
         final String subFolderNameOne = "subfolderOne";

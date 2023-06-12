@@ -23,13 +23,11 @@ public final class FileService {
     private final String baseURL;
 
     public FileService() throws IOException {
-        this.baseURL = DEFAULT_BASE_PATH;
-        this.rootFolder = createFolder(DEFAULT_ROOT_FOLDER_NAME);
+        this(DEFAULT_BASE_PATH, DEFAULT_ROOT_FOLDER_NAME);
     }
 
     public FileService(final String rootFolderName) throws IOException {
-        this.baseURL = DEFAULT_BASE_PATH;
-        this.rootFolder = createFolder(rootFolderName);
+        this(DEFAULT_BASE_PATH, rootFolderName);
     }
 
     public FileService(final String baseDirectory, final String rootFolderName) throws IllegalArgumentException, IOException {
