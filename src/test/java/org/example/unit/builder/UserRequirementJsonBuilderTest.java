@@ -1,6 +1,7 @@
 package org.example.unit.builder;
 
 import org.example.Builder.UserRequirementJsonBuilder;
+import org.example.exceptions.InvalidPromptException;
 import org.example.models.CodeBaseRequirements;
 import org.example.models.LearningLevel;
 import org.example.validators.AzureValidation;
@@ -32,25 +33,25 @@ public class UserRequirementJsonBuilderTest {
     }
 
     @Test
-    public void testSetReadMeFailed(){
+    public void testSetReadMeFailed() throws InvalidPromptException {
         when(codeBaseRequirementsValidator.validateReadMeTopics(any())).thenReturn(new AzureValidation(false, "testing failed validation"));
         assertFalse(userRequirementJsonBuilder.setReadMeTopics("test"));
     }
 
     @Test
-    public void testSetReadMePassed(){
+    public void testSetReadMePassed() throws InvalidPromptException {
         when(codeBaseRequirementsValidator.validateReadMeTopics(any())).thenReturn(new AzureValidation(true, "testing validation"));
         assertTrue(userRequirementJsonBuilder.setReadMeTopics("test"));
     }
 
     @Test
-    public void testSetLanguageFailed(){
+    public void testSetLanguageFailed() throws InvalidPromptException {
         when(codeBaseRequirementsValidator.validateLanguage(any())).thenReturn(new AzureValidation(false, "testing failed validation"));
         assertFalse(userRequirementJsonBuilder.setLanguage("test"));
     }
 
     @Test
-    public void testSetLanguagePassed(){
+    public void testSetLanguagePassed() throws InvalidPromptException {
         when(codeBaseRequirementsValidator.validateLanguage(any())).thenReturn(new AzureValidation(true, "testing validation"));
         assertTrue(userRequirementJsonBuilder.setLanguage("test"));
     }
@@ -68,19 +69,19 @@ public class UserRequirementJsonBuilderTest {
     }
 
     @Test
-    public void testSetUserLearningRequirementLevelPass(){
+    public void testSetUserLearningRequirementLevelPass() throws InvalidPromptException {
         when(codeBaseRequirementsValidator.validateLearningLevel(any())).thenReturn(new AzureValidation(true, "testing validation"));
         assertTrue(userRequirementJsonBuilder.setLearningLevel("1"));
     }
     @Test
-    public void testSetUserLearningRequirementLevelFail(){
+    public void testSetUserLearningRequirementLevelFail() throws InvalidPromptException {
         when(codeBaseRequirementsValidator.validateLearningLevel(any())).thenReturn(new AzureValidation(false, "testing validation"));
         assertFalse(userRequirementJsonBuilder.setLearningLevel("-1"));
     }
 
 
     @Test
-    public void testBuildSucceeded(){
+    public void testBuildSucceeded() throws InvalidPromptException {
         final String language = "node.js";
         final String readMe = "readMe";
         final LearningLevel learningLevelNumber = LearningLevel.DEPENDENCY_MANAGEMENT;

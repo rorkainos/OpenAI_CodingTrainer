@@ -1,5 +1,6 @@
 package org.example.Builder;
 
+import org.example.exceptions.InvalidPromptException;
 import org.example.models.CodeBaseRequirements;
 import org.example.models.LearningLevel;
 import org.example.models.UserLearningRequirement;
@@ -25,7 +26,7 @@ public class UserRequirementJsonBuilder {
         this.codeBaseRequirementsValidator = codeBaseRequirementsValidator;
     }
 
-    public boolean setLanguage(String language) {
+    public boolean setLanguage(String language) throws InvalidPromptException {
         AzureValidation validation = codeBaseRequirementsValidator.validateLanguage(language);
 
         if(validation.isPass())
@@ -35,7 +36,7 @@ public class UserRequirementJsonBuilder {
         return validation.isPass();
     }
 
-    public boolean setLearningLevel(final String learningLevelNumber) {
+    public boolean setLearningLevel(final String learningLevelNumber) throws InvalidPromptException {
         AzureValidation validation = codeBaseRequirementsValidator.validateLearningLevel(learningLevelNumber);
 
         if(validation.isPass())
@@ -55,7 +56,7 @@ public class UserRequirementJsonBuilder {
         return validation.isPass();
     }
 
-    public boolean setReadMeTopics(String readMeTopics) {
+    public boolean setReadMeTopics(String readMeTopics) throws InvalidPromptException {
         AzureValidation validation = codeBaseRequirementsValidator.validateReadMeTopics(readMeTopics);
 
         if (validation.isPass())
