@@ -1,6 +1,7 @@
 package org.example;
 
 
+import org.example.exceptions.InvalidPromptException;
 import org.example.exceptions.PropertyNotFoundException;
 import org.example.service.OpenAiAPIClient;
 
@@ -15,7 +16,7 @@ import java.util.Scanner;
 
 public class App 
 {
-    public static void main( String[] args ) throws PropertyNotFoundException, IOException {
+    public static void main( String[] args ) throws PropertyNotFoundException, IOException, InvalidPromptException {
         UserRequirementJsonBuilder jsonBuilder = new UserRequirementJsonBuilder(new CodeBaseRequirementsValidator());
         System.out.println("Description of Program... ");
         System.out.println("What Software Language would you like to learn today ");
