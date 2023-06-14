@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /*
 * Testing the FileService class
@@ -93,7 +94,25 @@ public class FileServiceTest {
         assertTrue(file.exists());
         assertEquals(fileToBePlacedInFolder, file.getName());
         assertEquals(rootFolder.getAbsolutePath(), file.getParentFile().getAbsolutePath());
+    }
 
+    @Test
+    public void testParentDir_FileCanBePlaced_WithSubFolderMethod() throws IOException {
+        final FileService fileService = new FileService("","testParentDir_FileCanBePlaced_WithSubFolderMethod");
+        fileService.setParentFolderForDeletion();
+
+        final File rootFolder = fileService.getRootFolder();
+        final String fileToBePlacedInFolder = "TestFileName.js";
+
+        File file = fileService.createFileAndSubFolders(fileToBePlacedInFolder, GenerateFiles.createJSFileString());
+        file.deleteOnExit();
+
+        assertTrue(rootFolder.exists());
+        assertTrue(rootFolder.isDirectory());
+
+        assertTrue(file.exists());
+        assertEquals(fileToBePlacedInFolder, file.getName());
+        assertEquals(rootFolder.getAbsolutePath(), file.getParentFile().getAbsolutePath());
     }
 
     @Test
@@ -189,4 +208,108 @@ public class FileServiceTest {
         assertEquals(fileTwoName, fileTwo.getName());
         assertEquals(subFolderTwo.getAbsolutePath(), fileTwo.getParentFile().getAbsolutePath());
     }
+
+    @Test
+    public void testFileAndSubFolderCreated() throws IOException {
+        final FileService fileService = new FileService("","testFileAndSubFolderCreated");
+        fileService.setParentFolderForDeletion();
+
+        final String folderName = "subfolder";
+        final String fileName = "test.html";
+        final String filePath_one = folderName + "/" + fileName;
+        final String fileContent = GenerateFiles.createHTMLFileString();
+
+        File file = fileService.createFileAndSubFolders(filePath_one, fileContent);
+        assertEquals(fileName, file.getName());
+        assertEquals(folderName, file.getParentFile().getName());
+        assertTrue(file.getParentFile().isDirectory());
+    }
+
+    @Test
+    public void testFileAndManySubFolderCreated() throws IOException {
+        final FileService fileService = new FileService("", "testFileAndManySubFolderCreated");
+        fileService.setParentFolderForDeletion();
+
+        final String filePath_one = "subfolder1/subfolder2/subfolder3/test.html";
+        final String fileContent = GenerateFiles.createHTMLFileString();
+
+        File file = fileService.createFileAndSubFolders(filePath_one, fileContent);
+
+        assertFilesCreation("test.html", "subfolder1", "subfolder2", "subfolder3", file);
+    }
+
+    @Test
+    public void testTwoFilesAndManySubFolderCreated() throws IOException {
+        final FileService fileService = new FileService("", "testTwoFilesAndManySubFolderCreated");
+        fileService.setParentFolderForDeletion();
+
+        final String filePath_one = "subfolder1/subfolder2/subfolder3/test.html";
+        final String filePath_two = "subfolderA/subfolderB/subfolderC/test.html";
+        final String fileContent = GenerateFiles.createHTMLFileString();
+
+        File file = fileService.createFileAndSubFolders(filePath_one, fileContent);
+        File fileTwo = fileService.createFileAndSubFolders(filePath_two, fileContent);
+
+        assertFilesCreation("test.html", "subfolder1", "subfolder2", "subfolder3", file);
+        assertFilesCreation("test.html", "subfolderA", "subfolderB", "subfolderC", fileTwo);
+    }
+
+    @Test
+    public void testFileCreationSameSubFolders() throws IOException {
+        final FileService fileService = new FileService("", "testFileCreationSameSubFolders");
+        fileService.setParentFolderForDeletion();
+
+        final String filePath_one = "subfolder1/subfolder2/subfolder3/test.html";
+        final String filePath_two = "subfolder1/subfolder2/subfolder3/test2.html";
+        final String fileContent = GenerateFiles.createHTMLFileString();
+
+        File file = fileService.createFileAndSubFolders(filePath_one, fileContent);
+        File fileTwo = fileService.createFileAndSubFolders(filePath_two, fileContent);
+
+        assertFilesCreation("test.html", "subfolder1", "subfolder2", "subfolder3", file);
+        assertFilesCreation("test2.html", "subfolder1", "subfolder2", "subfolder3", fileTwo);
+    }
+
+    @Test
+    public void testFileCreationSameSubFoldersUntilLast() throws IOException {
+        final FileService fileService = new FileService("", "testFileCreationSameSubFoldersUntilLast");
+        fileService.setParentFolderForDeletion();
+
+        final String filePath_one = "subfolder1/subfolder2/subfolderA/test.html";
+        final String filePath_two = "subfolder1/subfolder2/subfolder3/test2.html";
+        final String fileContent = GenerateFiles.createHTMLFileString();
+
+        File file = fileService.createFileAndSubFolders(filePath_one, fileContent);
+        File fileTwo = fileService.createFileAndSubFolders(filePath_two, fileContent);
+
+        assertFilesCreation("test.html", "subfolder1", "subfolder2", "subfolderA", file);
+        assertFilesCreation("test2.html", "subfolder1", "subfolder2", "subfolder3", fileTwo);
+    }
+
+    @Test
+    public void testTwoFilesAndManySubFolderCreated_SameTopFolder() throws IOException {
+        final FileService fileService = new FileService("", "testTwoFilesAndManySubFolderCreated_SameTopFolder");
+        fileService.setParentFolderForDeletion();
+
+        final String filePath_one = "subfolder1/subfolder2/subfolder3/test.html";
+        final String filePath_two = "subfolder1/subfolderA/subfolderB/test.html";
+        final String fileContent = GenerateFiles.createHTMLFileString();
+
+        File file = fileService.createFileAndSubFolders(filePath_one, fileContent);
+        File fileTwo = fileService.createFileAndSubFolders(filePath_two, fileContent);
+
+        assertFilesCreation("test.html", "subfolder1", "subfolder2", "subfolder3", file);
+        assertFilesCreation("test.html", "subfolder1", "subfolderA", "subfolderB", fileTwo);
+    }
+
+    private void assertFilesCreation(String fileName, String folderOne, String folderTwo, String folderThree, File file){
+        assertEquals(fileName, file.getName());
+        assertEquals(folderThree, file.getParentFile().getName());
+        assertEquals(folderTwo, file.getParentFile().getParentFile().getName());
+        assertEquals(folderOne, file.getParentFile().getParentFile().getParentFile().getName());
+        assertTrue(file.getParentFile().isDirectory());
+    }
+
+    // test when many sub folders are created different paths
+    // test when the is shared folders
 }
