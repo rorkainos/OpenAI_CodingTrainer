@@ -15,7 +15,10 @@ public class CodeBaseRequirementsValidator {
 
     public AzureValidation validateReadMeTopics(final String readMeTopics){
         // node.js
-        return new AzureValidation(true, "needs implemented");
+        if(azureValidationCaller.validateReadMe(readMeTopics))
+            return new AzureValidation(true, "Acceptable ReadMe topic(s) Passed");
+        else
+            return new AzureValidation(false, "This is/are not acceptable ReadMe topic(s)");
     }
 
     public AzureValidation validateLanguage(final String language){
@@ -27,6 +30,9 @@ public class CodeBaseRequirementsValidator {
 
     public AzureValidation validateLanguageCurrentExperience(final String language, final String topic, final String context){
         // call azure endpoint to validate
-        return new AzureValidation(true, "needs implemented");
+        if(azureValidationCaller.validateChosenTopicExperience(language, topic, context))
+            return new AzureValidation(true, "Acceptable Experience Level for selected language and topic Passed");
+        else
+            return new AzureValidation(false, "This is not an acceptable experience level as of 2021");
     }
 }

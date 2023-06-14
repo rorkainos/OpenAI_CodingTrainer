@@ -4,10 +4,22 @@ import org.example.properties.AzureProperties;
 
 public final class AzureValidationCaller extends AzureCaller {
 
-    private final static String TRUE_FALSE_PROMPT = "Answer with one word small case true if it exists or false if it does not";
-    private final static String LANGUAGE_VALIDATION_PROMPT = "Is %s a programming language?" + TRUE_FALSE_PROMPT;
-    private final static String README_VALIDATION_PROMPT = "";// TODO Fill in
-    private final static String TOPIC_EXPERIENCE_VALIDATION_PROMPT = "";
+    private final static String TRUE_FALSE_PROMPT =
+            "Answer with one word small case true if it exists or false if it does not";
+
+    private final static String LANGUAGE_VALIDATION_PROMPT =
+            "Is %s a programming language? " +
+            TRUE_FALSE_PROMPT;
+
+    private final static String README_VALIDATION_PROMPT =
+            "Is it possible to get information on subject in quotation marks \"%s\"? and is this subject related to computer science?" +
+            TRUE_FALSE_PROMPT;
+
+    private final static String TOPIC_EXPERIENCE_VALIDATION_PROMPT =
+            "Is this experience in quotation marks \"%s\" relevant to %s programming language and %s topic? " +
+            TRUE_FALSE_PROMPT;
+
+
     public AzureValidationCaller(AzureProperties azureProperties) {
         super(azureProperties);
     }
@@ -15,21 +27,50 @@ public final class AzureValidationCaller extends AzureCaller {
     public boolean validateLanguage(final String language){
         final String prompt = LANGUAGE_VALIDATION_PROMPT.replaceFirst("%s", language);
         final String response = getChatCompletion(prompt).get(0);
+        System.out.printf(
+                "RESULT: %s, validateLanguage, language: %s\n",
+                response,
+                language);
+
         return isTrue(response);
     }
 
     public boolean validateChosenTopicExperience(final String language, final String topic, final String experience){
-        //TODO you will need to use language, topic and experience in this query
-        // final String prompt = TOPIC_EXPERIENCE_VALIDATION_PROMPT.replaceFirst("%s", experience);
-        // final String response = getChatCompletion(prompt).get(0);
-        // return isTrue(response);
-        return false;
+        if(experience.toLowerCase().equals("none")){
+            return true;
+        }
+        final String prompt = String.format(TOPIC_EXPERIENCE_VALIDATION_PROMPT, experience, language, topic);
+        final String response = getChatCompletion(prompt).get(0);
+        System.out.printf(
+                "RESULT: %s, validateChosenTopicExperience, language: %s, topic: %s, experience: %s\n",
+                response,
+                language,
+                topic,
+                experience);
+
+        return isTrue(response);
     }
 
     public boolean validateReadMe(final String readMe){
-        final String prompt = README_VALIDATION_PROMPT.replaceFirst("%s", readMe);
-        final String response = getChatCompletion(prompt).get(0);
-        return isTrue(response);
+        String[] readMeTopics = readMe.split(",");
+
+        if(readMe.contains("&") || readMe.contains(";")){
+            return false;
+        }
+
+        for (String topic : readMeTopics){
+            final String prompt = String.format(README_VALIDATION_PROMPT, readMe);
+            final String response = getChatCompletion(prompt).get(0);
+            System.out.printf(
+                    "RESULT: %s, validateReadMe, readMe topic: %s\n",
+                    response,
+                    topic);
+
+            if(!isTrue(response)){
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean isTrue(final String response){
