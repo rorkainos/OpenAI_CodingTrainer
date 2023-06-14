@@ -53,24 +53,22 @@ public final class AzureValidationCaller extends AzureCaller {
 
     public boolean validateReadMe(final String readMe){
         String[] readMeTopics = readMe.split(",");
+        String response = "false";
 
         if(readMe.contains("&") || readMe.contains(";")){
-            return false;
+            response = "false";
         }
 
         for (String topic : readMeTopics){
             final String prompt = String.format(README_VALIDATION_PROMPT, readMe);
-            final String response = getChatCompletion(prompt).get(0);
+            response = getChatCompletion(prompt).get(0);
             System.out.printf(
                     "RESULT: %s, validateReadMe, readMe topic: %s\n",
                     response,
                     topic);
 
-            if(!isTrue(response)){
-                return false;
-            }
         }
-        return true;
+        return isTrue(response);
     }
 
     private boolean isTrue(final String response){
