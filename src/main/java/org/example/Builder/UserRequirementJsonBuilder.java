@@ -17,10 +17,17 @@ public class UserRequirementJsonBuilder {
     private String languageTopic;
     private String readMeTopics;
     private final CodeBaseRequirementsValidator codeBaseRequirementsValidator;
-    private CodeBaseRequirements codeBaseRequirements;
 
     public UserRequirementJsonBuilder(CodeBaseRequirementsValidator codeBaseRequirementsValidator) {
         this.codeBaseRequirementsValidator = codeBaseRequirementsValidator;
+    }
+
+    public CodeBaseRequirements build() {
+        if(readMeTopics == null && language == null && currentExperience == null && languageTopic == null)
+            throw new IllegalStateException("Attributes to create Requirements for code base are not all met");
+
+        System.out.println("Creating Code Base Requirements ..... ");
+        return new CodeBaseRequirements(language, languageTopic, currentExperience, readMeTopics);
     }
 
     public String getLanguage() {
@@ -60,18 +67,5 @@ public class UserRequirementJsonBuilder {
 
         System.out.println("Attribute: readMeTopics | Validation Result | " + validation.isPass() + " Reason: " + validation.reason());
         return validation.isPass();
-    }
-
-    public CodeBaseRequirements build(){
-
-        if(codeBaseRequirements != null)
-            return this.codeBaseRequirements;
-
-        if(readMeTopics == null && language == null && currentExperience == null && languageTopic == null)
-            throw new IllegalStateException("Attributes to create Requirements for code base are not all met");
-
-        System.out.println("Creating Code Base Requirements ..... ");
-        this.codeBaseRequirements = new CodeBaseRequirements(language, languageTopic, currentExperience, readMeTopics);
-        return codeBaseRequirements;
     }
 }

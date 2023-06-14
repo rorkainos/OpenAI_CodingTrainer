@@ -1,6 +1,7 @@
 package org.example.Builder;
 
-import org.example.AzureCaller;
+import org.example.azure.AzureCaller;
+import org.example.properties.AzureProperties;
 import org.example.models.CodeBaseRequirements;
 
 /*
@@ -11,7 +12,7 @@ public class CodeBaseBuilder {
     private CodeBaseRequirements codeBaseRequirements;
     private AzureCaller aiCaller;
 
-    public CodeBaseBuilder(CodeBaseRequirements codeBaseRequirements, AzureCaller aiCaller) {
+    public CodeBaseBuilder(CodeBaseRequirements codeBaseRequirements, AzureProperties azureProperties) {
         this.codeBaseRequirements = codeBaseRequirements;
         this.aiCaller = aiCaller;
     }
