@@ -65,7 +65,7 @@ def output_json(languages, filenames, code):
         'code': code
     }
 
-    json_filename = 'label_lang_file_code.json'
+    json_filename = 'label_language_filename_code.json'
     with open(json_filename, 'w') as file:
         json.dump(data, file)
 
