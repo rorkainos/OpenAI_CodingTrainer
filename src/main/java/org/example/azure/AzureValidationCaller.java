@@ -56,9 +56,12 @@ public final class AzureValidationCaller extends AzureCaller {
         String response = "false";
 
         if(readMe.contains("&") || readMe.contains(";")){
-            response = "false";
+            return false;
         }
-
+        if(readMe.toLowerCase().equals("no") ||
+                readMe.toLowerCase().equals("none")){
+            return true;
+        }
         for (String topic : readMeTopics){
             final String prompt = String.format(README_VALIDATION_PROMPT, readMe);
             response = getChatCompletion(prompt).get(0);
