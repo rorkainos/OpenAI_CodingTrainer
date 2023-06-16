@@ -242,7 +242,7 @@ public class AzureValidationCallerTest {
         }
     }
 
-    public void testReadMe_Validation_Fail_Missus(){
+    public void testReadMe_Validation_Fail_Missuse(){
 
         final String readMe = "What day is it today";
 
@@ -254,6 +254,4 @@ public class AzureValidationCallerTest {
             fail();
         }
     }
-
-
 }
