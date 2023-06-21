@@ -7,6 +7,7 @@ import com.azure.core.credential.AzureKeyCredential;
 import org.example.properties.AzureProperties;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class AzureCaller {
@@ -17,7 +18,18 @@ public abstract class AzureCaller {
     }
 
     public List<String> getListOfTopics(final String language){
-        return List.of("Topics 1", "Topic 2");
+
+        final String prompt = String.format(
+                "Provide me list without numbers of topics to learn in %s. Provide answer in the following format \"topic1; topic2; topic3;...\"",
+                language);
+
+        List<String> topics = Arrays.stream(
+                getChatCompletion(prompt)
+                        .get(0)
+                        .split(";"))
+                .toList();
+
+        return topics;
     }
 
     protected List<String> getCompletion(List<String> prompts){

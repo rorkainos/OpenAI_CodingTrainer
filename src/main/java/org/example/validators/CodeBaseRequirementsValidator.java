@@ -28,6 +28,13 @@ public class CodeBaseRequirementsValidator {
             return new AzureValidation(false, "This is not an acceptable software language as of 2021");
     }
 
+    public AzureValidation validateTopic(final String topic, final String language){
+        if(azureValidationCaller.validateTopic(topic, language))
+            return new AzureValidation(true, "Topic selected successfully.");
+        else
+            return new AzureValidation(false, "This is not an acceptable topic, please select number from the list.");
+    }
+
     public AzureValidation validateLanguageCurrentExperience(final String language, final String topic, final String context){
         // call azure endpoint to validate
         if(azureValidationCaller.validateChosenTopicExperience(language, topic, context))

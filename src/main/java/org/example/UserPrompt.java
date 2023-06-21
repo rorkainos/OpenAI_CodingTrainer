@@ -35,15 +35,31 @@ public class UserPrompt {
         }
     }
 
+    private void setCustomTopic(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("\n Please provide custom topic and hit enter. \n");
+        while (!jsonBuilder.setLanguageTopic(scanner.nextLine())) {
+            System.out.println("\n Please enter a valid topic.... \n");
+        }
+    }
+
     private void setChosenTopic(){
         Scanner scanner = new Scanner(System.in);
         List<String> topics = aiCaller.getListOfTopics(jsonBuilder.getLanguage());
         for(int i = 0; i< topics.size(); i++)
             System.out.println(i + 1 + " : " + topics.get(i));
+        System.out.println(topics.size() + 1 + " :  Custom topic.");
+        System.out.println("From the list above select what topic you would like to upskill in. Please select a number");
 
-        System.out.println("From the list below select what topic you would like to upskill in. Please select a number");
         int topicElement = Integer.parseInt(scanner.nextLine()) - 1;
-        jsonBuilder.setLanguageTopic(topics.get(topicElement));
+        if (topicElement==topics.size()){
+            setCustomTopic();
+        }
+        else {
+            while (!jsonBuilder.setLanguageTopic(topics.get(topicElement))) {
+                System.out.println("\n Please enter a valid topic.... \n");
+            }
+        }
     }
 
     private void setChosenTopicExperience(){
