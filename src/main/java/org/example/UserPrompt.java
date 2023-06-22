@@ -56,9 +56,7 @@ public class UserPrompt {
             setCustomTopic();
         }
         else {
-            while (!jsonBuilder.setLanguageTopic(topics.get(topicElement))) {
-                System.out.println("\n Please enter a valid topic.... \n");
-            }
+            jsonBuilder.setLanguageTopic(topics.get(topicElement));
         }
     }
 
