@@ -43,7 +43,7 @@ public final class AzureValidationCaller extends AzureCaller {
         final String prompt = String.format(TOPIC_VALIDATION_PROMPT, topic, language);
         final String response = getChatCompletion(prompt).get(0);
         System.out.printf(
-                "RESULT: %s, validateLanguage, topic: %s, language: %s\n",
+                "RESULT: %s, validateTopic, topic: %s, language: %s\n",
                 response,
                 topic,
                 language);

@@ -44,8 +44,9 @@ public class UserRequirementJsonBuilder {
         return validation.isPass();
     }
 
-    public boolean setLanguageTopic(final String topic) {
-        AzureValidation validation = codeBaseRequirementsValidator.validateTopic(topic, this.language);
+    public boolean setLanguageTopic(final String topic, boolean customTopic) {
+
+        AzureValidation validation = codeBaseRequirementsValidator.validateTopic(topic, this.language, customTopic);
 
         if(validation.isPass())
             this.languageTopic = topic;

@@ -38,7 +38,7 @@ public class UserPrompt {
     private void setCustomTopic(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("\n Please provide custom topic and hit enter. \n");
-        while (!jsonBuilder.setLanguageTopic(scanner.nextLine())) {
+        while (!jsonBuilder.setLanguageTopic(scanner.nextLine(), true)) {
             System.out.println("\n Please enter a valid topic.... \n");
         }
     }
@@ -56,7 +56,7 @@ public class UserPrompt {
             setCustomTopic();
         }
         else {
-            jsonBuilder.setLanguageTopic(topics.get(topicElement));
+            jsonBuilder.setLanguageTopic(topics.get(topicElement), false);
         }
     }
 
