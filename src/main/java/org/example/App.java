@@ -1,5 +1,8 @@
 package org.example;
 
+import org.example.Builder.CodeBaseBuilder;
+import org.example.azure.AzureFileCreator;
+import org.example.exceptions.InvalidResponseException;
 import org.example.exceptions.PropertyNotFoundException;
 import org.example.models.CodeBaseRequirements;
 import org.example.properties.AzureProperties;
@@ -9,8 +12,7 @@ import java.io.IOException;
 
 public class App 
 {
-    public static void main( String[] args )
-    {
+    public static void main( String[] args ) throws IOException, InvalidResponseException {
         AzureProperties azureProperties = getProperties();
 
         if(azureProperties == null)
@@ -18,6 +20,9 @@ public class App
 
         UserPrompt userPrompts = new UserPrompt(azureProperties);
         CodeBaseRequirements userRequirements = userPrompts.build();
+        AzureFileCreator azureFileCreator = new AzureFileCreator(azureProperties);
+        CodeBaseBuilder codeBaseBuilder = new CodeBaseBuilder(userRequirements, azureFileCreator);
+        codeBaseBuilder.build("", "testSimpleBuild");
     }
 
     private static AzureProperties getProperties(){

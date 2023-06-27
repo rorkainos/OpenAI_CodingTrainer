@@ -1,6 +1,11 @@
 package org.example.azure;
 
+import com.azure.ai.openai.models.ChatMessage;
+import com.azure.ai.openai.models.ChatRole;
 import org.example.properties.AzureProperties;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class AzureValidationCaller extends AzureCaller {
 
@@ -19,14 +24,20 @@ public final class AzureValidationCaller extends AzureCaller {
             "Is this experience in quotation marks \"%s\" relevant to %s programming language and %s topic? " +
             TRUE_FALSE_PROMPT;
 
-
+    private final static String SYSTEM_PROMPT = "Assistant is an intelligent chatbot designed to help users create programming training materials";
+    private static ChatMessage chatMessage = new ChatMessage(ChatRole.SYSTEM);
+    private static List<ChatMessage> chatMessages = new ArrayList<>();
     public AzureValidationCaller(AzureProperties azureProperties) {
         super(azureProperties);
     }
 
     public boolean validateLanguage(final String language){
         final String prompt = LANGUAGE_VALIDATION_PROMPT.replaceFirst("%s", language);
-        final String response = getChatCompletion(prompt).get(0);
+        chatMessage.setContent(SYSTEM_PROMPT);
+        chatMessages.add(chatMessage);
+
+        final String response = getChatCompletion(chatMessages, prompt).get(0);
+
         System.out.printf(
                 "RESULT: %s, validateLanguage, language: %s\n",
                 response,
@@ -36,11 +47,13 @@ public final class AzureValidationCaller extends AzureCaller {
     }
 
     public boolean validateChosenTopicExperience(final String language, final String topic, final String experience){
-        if(experience.toLowerCase().equals("none")){
+        if(experience.equalsIgnoreCase("none")){
             return true;
         }
         final String prompt = String.format(TOPIC_EXPERIENCE_VALIDATION_PROMPT, experience, language, topic);
-        final String response = getChatCompletion(prompt).get(0);
+        chatMessage.setContent(SYSTEM_PROMPT);
+        chatMessages.add(chatMessage);
+        final String response = getChatCompletion(chatMessages, prompt).get(0);
         System.out.printf(
                 "RESULT: %s, validateChosenTopicExperience, language: %s, topic: %s, experience: %s\n",
                 response,
@@ -58,13 +71,15 @@ public final class AzureValidationCaller extends AzureCaller {
         if(readMe.contains("&") || readMe.contains(";")){
             return false;
         }
-        if(readMe.toLowerCase().equals("no") ||
-                readMe.toLowerCase().equals("none")){
+        if(readMe.equalsIgnoreCase("no") ||
+                readMe.equalsIgnoreCase("none")){
             return true;
         }
         for (String topic : readMeTopics){
             final String prompt = String.format(README_VALIDATION_PROMPT, readMe);
-            response = getChatCompletion(prompt).get(0);
+            chatMessage.setContent(SYSTEM_PROMPT);
+            chatMessages.add(chatMessage);
+            response = getChatCompletion(chatMessages, prompt).get(0);
             System.out.printf(
                     "RESULT: %s, validateReadMe, readMe topic: %s\n",
                     response,

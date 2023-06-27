@@ -3,6 +3,7 @@ package org.example.Builder;
 import org.example.azure.AzureCaller;
 import org.example.azure.AzureFileCreator;
 import org.example.azure.AzureProgramDetails;
+import org.example.exceptions.InvalidResponseException;
 import org.example.properties.AzureProperties;
 import org.example.models.CodeBaseRequirements;
 import org.example.service.FileService;
@@ -24,8 +25,8 @@ public class CodeBaseBuilder {
         this.fileCreator = fileCreator;
     }
 
-    public void build(final String rootDir, final String nameOfDir) throws IOException {
-        fileService = new FileService(rootDir, nameOfDir);
+    public void build(final String rootDir, final String nameOfDir) throws IOException, InvalidResponseException {
+        fileService = new FileService(nameOfDir);
         AzureProgramDetails programDetails = fileCreator.getProgramDetails(codeBaseRequirements);
 
         for (int i = 0; i < programDetails.filesAbsolutePaths().size(); i++) {
