@@ -16,6 +16,7 @@ public class UserRequirementJsonBuilder {
     private String currentExperience;
     private String languageTopic;
     private String readMeTopics;
+    private int difficulty;
     private final CodeBaseRequirementsValidator codeBaseRequirementsValidator;
 
     public UserRequirementJsonBuilder(CodeBaseRequirementsValidator codeBaseRequirementsValidator) {
@@ -27,7 +28,7 @@ public class UserRequirementJsonBuilder {
             throw new IllegalStateException("Attributes to create Requirements for code base are not all met");
 
         System.out.println("Creating Code Base Requirements ..... ");
-        return new CodeBaseRequirements(language, languageTopic, currentExperience, readMeTopics);
+        return new CodeBaseRequirements(language, languageTopic, currentExperience, readMeTopics, difficulty);
     }
 
     public String getLanguage() {
@@ -73,6 +74,15 @@ public class UserRequirementJsonBuilder {
             this.readMeTopics = readMeTopics;
 
         System.out.println("Attribute: readMeTopics | Validation Result | " + validation.isPass() + " Reason: " + validation.reason());
+        return validation.isPass();
+    }
+
+    public boolean setDifficulty(final int difficulty) {
+        AzureValidation validation = codeBaseRequirementsValidator.validateDifficulty(difficulty);
+
+        if(validation.isPass())
+            this.difficulty = difficulty;
+        System.out.println("Attribute: Difficulty | Validation Result | " + validation.isPass() + " Reason: " + validation.reason());
         return validation.isPass();
     }
 }

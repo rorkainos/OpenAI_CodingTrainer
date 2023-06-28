@@ -47,4 +47,11 @@ public class CodeBaseRequirementsValidator {
         else
             return new AzureValidation(false, "This is not an acceptable experience level as of 2021");
     }
+
+    public AzureValidation validateDifficulty(int difficulty) {
+        if(difficulty >= 0 && difficulty <= 5)
+            return new AzureValidation(true, "Acceptable difficulty level.");
+        else
+            return new AzureValidation(false, "This is not an acceptable difficulty level.");
+    }
 }

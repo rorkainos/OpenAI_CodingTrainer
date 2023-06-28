@@ -5,6 +5,7 @@ import org.example.Builder.UserRequirementJsonBuilder;
 import org.example.DataGeneration.GenerateFiles;
 import org.example.azure.AzureFileCreator;
 import org.example.azure.AzureProgramDetails;
+import org.example.exceptions.InvalidResponseException;
 import org.example.exceptions.PropertyNotFoundException;
 import org.example.models.CodeBaseRequirements;
 import org.example.properties.PropertiesExtractor;
@@ -26,7 +27,7 @@ public class CodeBaseBuilderTest {
     @Mock
     private AzureFileCreator azureFileCreator;
     private CodeBaseBuilder codeBaseBuilder;
-    private final static CodeBaseRequirements CODE_BASE_REQUIREMENTS = new CodeBaseRequirements("", "", "", "");
+    private final static CodeBaseRequirements CODE_BASE_REQUIREMENTS = new CodeBaseRequirements("", "", "", "", 0);
 
     @Before
     public void setUp() {
@@ -35,7 +36,7 @@ public class CodeBaseBuilderTest {
     }
 
     @Test
-    public void testSimpleBuild() throws IOException {
+    public void testSimpleBuild() throws IOException, InvalidResponseException {
         List<String> filesWithAbsolutePath = List.of("package.json", "subfolder1/index.html", "subfolder2/move.js", "homePage.css");
         List<String> fileContents = List.of(GenerateFiles.createJSONFileString(), GenerateFiles.createHTMLFileString(),
                 GenerateFiles.createJSFileString(), GenerateFiles.createCSSFileString());
