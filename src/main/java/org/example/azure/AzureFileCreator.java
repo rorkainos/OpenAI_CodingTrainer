@@ -24,14 +24,14 @@ public class AzureFileCreator extends AzureCaller {
 
     public AzureProgramDetails getProgramDetails(CodeBaseRequirements codeBase) throws InvalidResponseException {
 
-        String prompt = "The area of interest for the training material is " + codeBase.topic() +
-                "Could you please provide me with incorrect code in " + codeBase.language() + ", followed by a corresponding unit test that will fail?" +
-                "Then provide corrected code that will pass the unit test." +
-                "There should be 3 code snippets, one for the incorrect code, one for the unit test and one for the corrected code." +
-                "For each code snippet, provide an appropriate file name within an absolute file path." +
-                "The file paths should be structured such that the files adhere to the best practices of a project in " + codeBase.language()  +
-                "Surround the file paths with the symbols '£'. Example: £src/main/index.html£" +
-                "There should be no explanations of the code.";
+        String prompt = "The area of interest for the training material is " + codeBase.topic() + ". " +
+                "Could you please provide me with incorrect code in " + codeBase.language() + ", followed by a corresponding unit test that will fail? " +
+                "Then provide corrected code that will pass the unit test. " +
+                "There should be 3 code snippets, one for the incorrect code, one for the unit test and one for the corrected code. " +
+                "For each code snippet, provide appropriate file name within an absolute file path. The correct and incorrect code snippets should be in separate files." +
+                "The file paths should be structured such that the files adhere to the best practices of a project in " + codeBase.language()  + ". " +
+                "Surround the file paths with the symbols '£'. Example: £src/main/index.html£. " +
+                "There should be no explanations of the code. ";
 
         ChatMessage systemChatMessage = new ChatMessage(ChatRole.SYSTEM);
         systemChatMessage.setContent(SYSTEM_PROMPT);
@@ -59,7 +59,7 @@ public class AzureFileCreator extends AzureCaller {
         List<String> fileContents = filterResponseByRegex(response, "\\`\\`\\`(.+?)\\`\\`\\`");
 
         if(!codeBase.readMeTopics().equalsIgnoreCase("no")) {
-            String readmeResponse = getReadmeFile();System.out.println(readmeResponse);
+            String readmeResponse = getReadmeFile();
             filesWithAbsolutePath.add("Readme.md");
             fileContents.add(filterResponseByRegex(readmeResponse, "\\$\\$(.*?)\\$\\$").get(0));
         }
