@@ -37,33 +37,32 @@ public class AzureFileCreator extends AzureCaller {
         systemChatMessage.setContent(SYSTEM_PROMPT);
         chatMessages.add(systemChatMessage);
 
-        System.out.println(prompt);
-
         String response = getChatCompletion(chatMessages, prompt).get(0);
 
+        // This logic could use some improvement
+        ChatMessage promptChatMessage = new ChatMessage(ChatRole.USER);
+        promptChatMessage.setContent(prompt);
+        chatMessages.add(promptChatMessage);
+        ChatMessage responseChatMessage = new ChatMessage(ChatRole.ASSISTANT);
+        responseChatMessage.setContent(response);
+        chatMessages.add(responseChatMessage);
+
         for (int i = 1; i <= codeBase.difficulty(); i++) {
-            ChatMessage promptChatMessage = new ChatMessage(ChatRole.USER);
-            promptChatMessage.setContent(prompt);
+            response = getChatCompletion(chatMessages, INCREASE_DIFFICULTY_PROMPT).get(0);
+            promptChatMessage.setContent(INCREASE_DIFFICULTY_PROMPT);
             chatMessages.add(promptChatMessage);
-            ChatMessage responseChatMessage = new ChatMessage(ChatRole.ASSISTANT);
             responseChatMessage.setContent(response);
             chatMessages.add(responseChatMessage);
-            response = getChatCompletion(chatMessages, INCREASE_DIFFICULTY_PROMPT).get(0);
         }
-
-        System.out.println(response);
 
         List<String> filesWithAbsolutePath = filterResponseByRegex(response, "£(.*?)£");
-        List<String> fileContents = filterResponseByRegex(response, "\\|\\|\\|(.+?)\\|\\|\\|");
+        List<String> fileContents = filterResponseByRegex(response, "\\`\\`\\`(.+?)\\`\\`\\`");
 
         if(!codeBase.readMeTopics().equalsIgnoreCase("no")) {
-            String readmeResponse = getReadmeFile();
+            String readmeResponse = getReadmeFile();System.out.println(readmeResponse);
             filesWithAbsolutePath.add("Readme.md");
-            fileContents.add(filterResponseByRegex(readmeResponse, "$$(.*?)$$").get(0));
+            fileContents.add(filterResponseByRegex(readmeResponse, "\\$\\$(.*?)\\$\\$").get(0));
         }
-
-        System.out.println(filesWithAbsolutePath.toString());
-        System.out.println(fileContents.toString());
 
         if(fileContents.isEmpty() || filesWithAbsolutePath.isEmpty() || filesWithAbsolutePath.size() != fileContents.size()) {
             throw new InvalidResponseException();
