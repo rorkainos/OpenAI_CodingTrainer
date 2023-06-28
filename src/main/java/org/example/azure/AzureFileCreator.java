@@ -30,8 +30,10 @@ public class AzureFileCreator extends AzureCaller {
                 "There should be 3 code snippets, one for the incorrect code, one for the unit test and one for the corrected code." +
                 "For each code snippet, provide an appropriate file name within an absolute file path." +
                 "The file paths should be structured such that the files adhere to the best practices of a project in " + codeBase.language()  +
-                "Surround the file paths with the symbols '£'. Example: £src/main/index.html£" +
-                "There should be no explanations of the code.";
+                "Surround the file paths with the symbols '£'. Example: £src/main/index.html£." +
+                "There should be no explanations of the code. " +
+                "Only if the code requires any dependencies, generate a configuration file that will be used install the dependencies to run the code locally and outside of the browser. " +
+                "Surround the configuration file path with '£'.";
 
         ChatMessage systemChatMessage = new ChatMessage(ChatRole.SYSTEM);
         systemChatMessage.setContent(SYSTEM_PROMPT);
@@ -54,7 +56,7 @@ public class AzureFileCreator extends AzureCaller {
         System.out.println(response);
 
         List<String> filesWithAbsolutePath = filterResponseByRegex(response, "£(.*?)£");
-        List<String> fileContents = filterResponseByRegex(response, "\\|\\|\\|(.+?)\\|\\|\\|");
+        List<String> fileContents = filterResponseByRegex(response, "```(.+?)```");
 
         if(!codeBase.readMeTopics().equalsIgnoreCase("no")) {
             String readmeResponse = getReadmeFile();
