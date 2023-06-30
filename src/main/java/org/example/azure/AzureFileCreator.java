@@ -33,13 +33,15 @@ public class AzureFileCreator extends AzureCaller {
                 "Surround the file paths with the symbols '£'. Example: £src/main/index.html£. " +
                 "There should be no explanations of the code. ";
 
+        List<String> filesWithAbsolutePath = new ArrayList<>();
+        List<String> fileContents = new ArrayList<>();
+
         ChatMessage systemChatMessage = new ChatMessage(ChatRole.SYSTEM);
         systemChatMessage.setContent(SYSTEM_PROMPT);
         chatMessages.add(systemChatMessage);
 
         String response = getChatCompletion(chatMessages, prompt).get(0);
 
-        // This logic could use some improvement
         ChatMessage promptChatMessage = new ChatMessage(ChatRole.USER);
         promptChatMessage.setContent(prompt);
         chatMessages.add(promptChatMessage);
@@ -47,24 +49,22 @@ public class AzureFileCreator extends AzureCaller {
         responseChatMessage.setContent(response);
         chatMessages.add(responseChatMessage);
 
-        for (int i = 1; i <= codeBase.difficulty(); i++) {
-            response = getChatCompletion(chatMessages, INCREASE_DIFFICULTY_PROMPT).get(0);
-            promptChatMessage.setContent(INCREASE_DIFFICULTY_PROMPT);
-            chatMessages.add(promptChatMessage);
-            responseChatMessage.setContent(response);
-            chatMessages.add(responseChatMessage);
-        }
+        if(codeBase.difficulty() != 0) {
+            response = getIncreasedDifficulty(codeBase);
 
-        List<String> filesWithAbsolutePath = filterResponseByRegex(response, "£(.*?)£");
-        List<String> fileContents = filterResponseByRegex(response, "\\`\\`\\`(.+?)\\`\\`\\`");
+            filesWithAbsolutePath = filterResponseByRegex(response, "£(.*?)£");
+            fileContents = filterResponseByRegex(response, "\\`\\`\\`(.+?)\\`\\`\\`");
+        }
 
         if(!codeBase.readMeTopics().equalsIgnoreCase("no")) {
-            String readmeResponse = getReadmeFile();
-            filesWithAbsolutePath.add("Readme.md");
-            fileContents.add(filterResponseByRegex(readmeResponse, "\\$\\$(.*?)\\$\\$").get(0));
+                String readmeResponse = getReadmeFile();
+                filesWithAbsolutePath.add("Readme.md");
+                fileContents.add(filterResponseByRegex(readmeResponse, "\\$\\$(.*?)\\$\\$").get(0));
         }
 
-        if(fileContents.isEmpty() || filesWithAbsolutePath.isEmpty() || filesWithAbsolutePath.size() != fileContents.size()) {
+        if(fileContents.isEmpty() ||
+                filesWithAbsolutePath.isEmpty() ||
+                filesWithAbsolutePath.size() != fileContents.size()) {
             throw new InvalidResponseException();
         }
 
@@ -83,6 +83,23 @@ public class AzureFileCreator extends AzureCaller {
         }
 
         return filteredText;
+    }
+
+    public String getIncreasedDifficulty(CodeBaseRequirements codeBase) {
+        String finalResponse = "";
+
+        ChatMessage promptChatMessage = new ChatMessage(ChatRole.USER);
+        ChatMessage responseChatMessage = new ChatMessage(ChatRole.ASSISTANT);
+        promptChatMessage.setContent(INCREASE_DIFFICULTY_PROMPT);
+
+        for (int i = 1; i <= codeBase.difficulty(); i++) {
+            finalResponse = getChatCompletion(chatMessages, INCREASE_DIFFICULTY_PROMPT).get(0);
+            chatMessages.add(promptChatMessage);
+            responseChatMessage.setContent(finalResponse);
+            chatMessages.add(responseChatMessage);
+        }
+
+        return finalResponse;
     }
 
     public String getReadmeFile() {
