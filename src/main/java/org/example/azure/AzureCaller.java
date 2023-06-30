@@ -9,17 +9,36 @@ import com.azure.core.util.Configuration;
 import org.example.properties.AzureProperties;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class AzureCaller {
     private AzureProperties azureProperties;
+
+    private final static String SYSTEM_PROMPT = "Assistant is an intelligent chatbot designed to help users create programming training materials";
 
     public AzureCaller(AzureProperties azureProperties){
         this.azureProperties = azureProperties;
     }
 
     public List<String> getListOfTopics(final String language){
-        return List.of("Unit testing", "Integration testing");
+
+        ChatMessage chatMessage = new ChatMessage(ChatRole.SYSTEM);
+        List<ChatMessage> chatMessages = new ArrayList<>();
+        chatMessage.setContent(SYSTEM_PROMPT);
+        chatMessages.add(chatMessage);
+
+        final String prompt = String.format(
+                "Provide me list without numbers of topics to learn in %s. Provide answer in the following format \"topic1; topic2; topic3;...\"",
+                language);
+
+        List<String> topics = Arrays.stream(
+                getChatCompletion(chatMessages, prompt)
+                        .get(0)
+                        .split(";"))
+                .toList();
+
+        return topics;
     }
 
     protected List<String> getCompletion(List<String> prompts){

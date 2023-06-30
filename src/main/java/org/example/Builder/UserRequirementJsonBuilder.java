@@ -45,9 +45,16 @@ public class UserRequirementJsonBuilder {
         return validation.isPass();
     }
 
-    public void setLanguageTopic(final String languageTopic) {
-        this.languageTopic = languageTopic;
+    public boolean setLanguageTopic(final String topic, boolean customTopic) {
+
+        AzureValidation validation = codeBaseRequirementsValidator.validateTopic(topic, this.language, customTopic);
+
+        if(validation.isPass())
+            this.languageTopic = topic;
+
+        System.out.println("Attribute: languageTopic, language | Validation Result | " + validation.isPass() + " Reason: " + validation.reason());
         System.out.println("Topic Selected : " + languageTopic);
+        return validation.isPass();
     }
 
     public boolean setLanguageTopicCurrentExperience(final String currentExperience) {

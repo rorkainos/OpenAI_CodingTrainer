@@ -92,7 +92,7 @@ public class UserRequirementJsonBuilderTest {
 
         userRequirementJsonBuilder.setLanguage(language);
         userRequirementJsonBuilder.setReadMeTopics(readMe);
-        userRequirementJsonBuilder.setLanguageTopic(topic);
+        userRequirementJsonBuilder.setLanguageTopic(topic, true);
         userRequirementJsonBuilder.setLanguageTopicCurrentExperience(topicExperience);
         userRequirementJsonBuilder.setDifficulty(2);
 

@@ -27,6 +27,10 @@ public final class AzureValidationCaller extends AzureCaller {
     private final static String SYSTEM_PROMPT = "Assistant is an intelligent chatbot designed to help users create programming training materials";
     private static ChatMessage chatMessage = new ChatMessage(ChatRole.SYSTEM);
     private static List<ChatMessage> chatMessages = new ArrayList<>();
+    private final static String TOPIC_VALIDATION_PROMPT =
+            "Is this topic in quotation marks \"%s\" relevant to %s programming language? " +
+                    TRUE_FALSE_PROMPT;
+
     public AzureValidationCaller(AzureProperties azureProperties) {
         super(azureProperties);
     }
@@ -41,6 +45,18 @@ public final class AzureValidationCaller extends AzureCaller {
         System.out.printf(
                 "RESULT: %s, validateLanguage, language: %s\n",
                 response,
+                language);
+
+        return isTrue(response);
+    }
+
+    public boolean validateTopic(final String topic, final String language){
+        final String prompt = String.format(TOPIC_VALIDATION_PROMPT, topic, language);
+        final String response = getChatCompletion(chatMessages, prompt).get(0);
+        System.out.printf(
+                "RESULT: %s, validateTopic, topic: %s, language: %s\n",
+                response,
+                topic,
                 language);
 
         return isTrue(response);

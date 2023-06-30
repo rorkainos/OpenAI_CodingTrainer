@@ -28,7 +28,7 @@ public class AzureFileCreator extends AzureCaller {
                 "Could you please provide me with incorrect code in " + codeBase.language() + ", followed by a corresponding unit test that will fail? " +
                 "Then provide corrected code that will pass the unit test. " +
                 "There should be 3 code snippets, one for the incorrect code, one for the unit test and one for the corrected code. " +
-                "For each code snippet, provide appropriate file name within an absolute file path. The correct and incorrect code snippets should be in separate files." +
+                "For each code snippet, provide appropriate file name within an absolute file path. The correct and incorrect code snippets should be in separate file paths." +
                 "The file paths should be structured such that the files adhere to the best practices of a project in " + codeBase.language()  + ". " +
                 "Surround the file paths with the symbols '£'. Example: £src/main/index.html£. " +
                 "There should be no explanations of the code. ";
