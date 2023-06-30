@@ -68,14 +68,14 @@ public class UserRequirementJsonBuilderTest {
 
     @Test
     public void testSetDifficultyPassed() {
-        when(codeBaseRequirementsValidator.validateDifficulty(2)).thenReturn(new AzureValidation(true, "testing validation"));
-        assertTrue(userRequirementJsonBuilder.setDifficulty(2));
+        when(codeBaseRequirementsValidator.validateComplexity(2)).thenReturn(new AzureValidation(true, "testing validation"));
+        assertTrue(userRequirementJsonBuilder.setComplexity(2));
     }
 
     @Test
     public void testSetDifficultyFailed() {
-        when(codeBaseRequirementsValidator.validateDifficulty(9)).thenReturn(new AzureValidation(false, "testing validation"));
-        assertFalse(userRequirementJsonBuilder.setDifficulty(9));
+        when(codeBaseRequirementsValidator.validateComplexity(9)).thenReturn(new AzureValidation(false, "testing validation"));
+        assertFalse(userRequirementJsonBuilder.setComplexity(9));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class UserRequirementJsonBuilderTest {
         userRequirementJsonBuilder.setReadMeTopics(readMe);
         userRequirementJsonBuilder.setLanguageTopic(topic, true);
         userRequirementJsonBuilder.setLanguageTopicCurrentExperience(topicExperience);
-        userRequirementJsonBuilder.setDifficulty(2);
+        userRequirementJsonBuilder.setComplexity(2);
 
         CodeBaseRequirements codeBaseRequirements = userRequirementJsonBuilder.build();
         assertNotNull(codeBaseRequirements);
@@ -102,6 +102,6 @@ public class UserRequirementJsonBuilderTest {
         assertEquals(readMe, codeBaseRequirements.readMeTopics());
         assertEquals(topic, codeBaseRequirements.topic());
         assertEquals(topicExperience, codeBaseRequirements.currentExperience());
-        assertEquals(difficulty, codeBaseRequirements.difficulty());
+        assertEquals(difficulty, codeBaseRequirements.complexity());
     }
 }

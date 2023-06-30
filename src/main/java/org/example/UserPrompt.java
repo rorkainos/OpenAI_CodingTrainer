@@ -24,7 +24,7 @@ public class UserPrompt {
         this.setChosenTopic();
         this.setChosenTopicExperience();
         this.setChosenReadMe();
-        this.setDifficulty();
+        this.setComplexity();
         return this.jsonBuilder.build();
     }
 
@@ -81,13 +81,13 @@ public class UserPrompt {
         }
     }
 
-    private void setDifficulty() {
+    private void setComplexity() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("How difficult do you want the code to be?");
         System.out.println("Choose on a scale from 0 to 5, where 0 is very easy and 5 is very difficult.");
 
-        while (!jsonBuilder.setDifficulty(Integer.parseInt(scanner.nextLine()))) {
-            System.out.println("\n Please enter a valid difficulty \n");
+        while (!jsonBuilder.setComplexity(Integer.parseInt(scanner.nextLine()))) {
+            System.out.println("\n Please enter a valid complexity \n");
         }
     }
 }

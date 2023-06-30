@@ -15,7 +15,7 @@ public class AzureFileCreator extends AzureCaller {
 
     private final String SYSTEM_PROMPT = "Assistant is an intelligent chatbot designed to help users create programming training materials. " +
             "Assistant will provide the project's file structure, functional code and unit tests in multiple replies.";
-    private final String INCREASE_DIFFICULTY_PROMPT = "Could you make the code example more difficult?\n";
+    private final String INCREASE_COMPLEXITY_PROMPT = "Could you make the code example more difficult?\n";
     private List<ChatMessage> chatMessages = new ArrayList<>();
 
     public AzureFileCreator(AzureProperties azureProperties) {
@@ -49,8 +49,8 @@ public class AzureFileCreator extends AzureCaller {
         responseChatMessage.setContent(response);
         chatMessages.add(responseChatMessage);
 
-        if(codeBase.difficulty() != 0) {
-            response = getIncreasedDifficulty(codeBase);
+        if(codeBase.complexity() != 0) {
+            response = getIncreasedComplexity(codeBase);
 
             filesWithAbsolutePath = filterResponseByRegex(response, "£(.*?)£");
             fileContents = filterResponseByRegex(response, "\\`\\`\\`(.+?)\\`\\`\\`");
@@ -85,15 +85,15 @@ public class AzureFileCreator extends AzureCaller {
         return filteredText;
     }
 
-    public String getIncreasedDifficulty(CodeBaseRequirements codeBase) {
+    public String getIncreasedComplexity(CodeBaseRequirements codeBase) {
         String finalResponse = "";
 
         ChatMessage promptChatMessage = new ChatMessage(ChatRole.USER);
         ChatMessage responseChatMessage = new ChatMessage(ChatRole.ASSISTANT);
-        promptChatMessage.setContent(INCREASE_DIFFICULTY_PROMPT);
+        promptChatMessage.setContent(INCREASE_COMPLEXITY_PROMPT);
 
-        for (int i = 1; i <= codeBase.difficulty(); i++) {
-            finalResponse = getChatCompletion(chatMessages, INCREASE_DIFFICULTY_PROMPT).get(0);
+        for (int i = 1; i <= codeBase.complexity(); i++) {
+            finalResponse = getChatCompletion(chatMessages, INCREASE_COMPLEXITY_PROMPT).get(0);
             chatMessages.add(promptChatMessage);
             responseChatMessage.setContent(finalResponse);
             chatMessages.add(responseChatMessage);
