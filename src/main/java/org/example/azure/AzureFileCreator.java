@@ -31,9 +31,7 @@ public class AzureFileCreator extends AzureCaller {
                 "For each code snippet, provide an appropriate file name within an absolute file path." +
                 "The file paths should be structured such that the files adhere to the best practices of a project in " + codeBase.language()  +
                 "Surround the file paths with the symbols '£'. Example: £src/main/index.html£." +
-                "There should be no explanations of the code. " +
-                "Only if the code requires any dependencies, generate a configuration file that will be used install the dependencies to run the code locally and outside of the browser. " +
-                "Surround the configuration file path with '£'.";
+                "There should be no explanations of the code.";
 
         ChatMessage systemChatMessage = new ChatMessage(ChatRole.SYSTEM);
         systemChatMessage.setContent(SYSTEM_PROMPT);
@@ -42,11 +40,11 @@ public class AzureFileCreator extends AzureCaller {
         System.out.println(prompt);
 
         String response = getChatCompletion(chatMessages, prompt).get(0);
+        ChatMessage promptChatMessage = new ChatMessage(ChatRole.USER);
+        promptChatMessage.setContent(prompt);
+        chatMessages.add(promptChatMessage);
 
         for (int i = 1; i <= codeBase.difficulty(); i++) {
-            ChatMessage promptChatMessage = new ChatMessage(ChatRole.USER);
-            promptChatMessage.setContent(prompt);
-            chatMessages.add(promptChatMessage);
             ChatMessage responseChatMessage = new ChatMessage(ChatRole.ASSISTANT);
             responseChatMessage.setContent(response);
             chatMessages.add(responseChatMessage);
@@ -57,6 +55,8 @@ public class AzureFileCreator extends AzureCaller {
 
         List<String> filesWithAbsolutePath = filterResponseByRegex(response, "£(.*?)£");
         List<String> fileContents = filterResponseByRegex(response, "```(.+?)```");
+
+        addConfigurationFile(filesWithAbsolutePath, fileContents);
 
         if(!codeBase.readMeTopics().equalsIgnoreCase("no")) {
             String readmeResponse = getReadmeFile();
@@ -95,5 +95,22 @@ public class AzureFileCreator extends AzureCaller {
         String readmeResponse = getChatCompletion(chatMessages, readmePrompt).get(0);
 
         return readmeResponse;
+    }
+
+    private void addConfigurationFile(List<String> filesWithAbsolutePaths, List<String> fileContents) {
+        String prompt = "You have already provided the generated code. Please provide a configuration file for the " +
+                "generated code using the most appropriate package manager or runtime. Include any dependencies " +
+                "needed to run the project locally and outside of the browser. Surround the configuration file " +
+                "relative path with '£' and the file contents exclusively with '```'.";
+
+        String configFileInformation = getChatCompletion(chatMessages, prompt).get(0);
+        String configFileName = filterResponseByRegex(configFileInformation, "£(.*?)£").get(0);
+        String configFileContents = filterResponseByRegex(configFileInformation, "```(.+?)```").get(0);
+
+        if (configFileName != null && !configFileName.isBlank() &&
+                configFileContents != null && !configFileContents.isBlank()) {
+            filesWithAbsolutePaths.add(configFileName);
+            fileContents.add(configFileContents);
+        }
     }
 }
