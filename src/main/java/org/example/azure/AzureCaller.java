@@ -4,6 +4,8 @@ import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.ai.openai.models.*;
 import com.azure.core.credential.AzureKeyCredential;
+import com.azure.core.util.ClientOptions;
+import com.azure.core.util.Configuration;
 import org.example.properties.AzureProperties;
 
 import java.util.ArrayList;
@@ -13,18 +15,25 @@ import java.util.List;
 public abstract class AzureCaller {
     private AzureProperties azureProperties;
 
+    private final static String SYSTEM_PROMPT = "Assistant is an intelligent chatbot designed to help users create programming training materials";
+
     public AzureCaller(AzureProperties azureProperties){
         this.azureProperties = azureProperties;
     }
 
     public List<String> getListOfTopics(final String language){
 
+        ChatMessage chatMessage = new ChatMessage(ChatRole.SYSTEM);
+        List<ChatMessage> chatMessages = new ArrayList<>();
+        chatMessage.setContent(SYSTEM_PROMPT);
+        chatMessages.add(chatMessage);
+
         final String prompt = String.format(
                 "Provide me list without numbers of topics to learn in %s. Provide answer in the following format \"topic1; topic2; topic3;...\"",
                 language);
 
         List<String> topics = Arrays.stream(
-                getChatCompletion(prompt)
+                getChatCompletion(chatMessages, prompt)
                         .get(0)
                         .split(";"))
                 .toList();
@@ -45,24 +54,20 @@ public abstract class AzureCaller {
 
         Completions completions = client.getCompletions(azureProperties.apiDeployment(), new CompletionsOptions(promptList));
 
-        System.out.printf("Model ID=%s is created at %d.%n", completions.getId(), completions.getCreated());
         for (Choice choice : completions.getChoices()) {
             result.add(choice.getText());
-            System.out.printf("Index: %d, Text: %s.%n", choice.getIndex(), choice.getText());
         }
-
-        CompletionsUsage usage = completions.getUsage();
-        System.out.printf("Usage: number of prompt token is %d, "
-                        + "number of completion token is %d, and number of total tokens in request and response is %d.%n",
-                usage.getPromptTokens(), usage.getCompletionTokens(), usage.getTotalTokens());
 
         return result;
     }
 
-    protected List<String> getChatCompletion(String prompt) {
+    protected List<String> getChatCompletion(List<ChatMessage> contextChatMessages, String prompt) {
         List<String> result = new ArrayList<>();
 
         List<ChatMessage> chatMessages = new ArrayList<>();
+        if(!contextChatMessages.isEmpty()) {
+            chatMessages.addAll(contextChatMessages);
+        }
         ChatMessage chatMessage = new ChatMessage(ChatRole.USER);
         chatMessage.setContent(prompt);
         chatMessages.add(chatMessage);
@@ -72,18 +77,14 @@ public abstract class AzureCaller {
                 .credential(new AzureKeyCredential(azureProperties.apiKey()))
                 .buildClient();
 
-        ChatCompletions completions = client.getChatCompletions(azureProperties.apiDeployment(), new ChatCompletionsOptions(chatMessages));
+        ChatCompletionsOptions chatCompletionsOptions = new ChatCompletionsOptions(chatMessages);
+        chatCompletionsOptions.setTemperature(0.0);
 
-        System.out.printf("Model ID=%s is created at %d.%n", completions.getId(), completions.getCreated());
+        ChatCompletions completions = client.getChatCompletions(azureProperties.apiDeployment(), chatCompletionsOptions);
+
         for (ChatChoice choice : completions.getChoices()) {
             result.add(choice.getMessage().getContent());
-            System.out.printf("Index: %d, Text: %s.%n", choice.getIndex(), String.valueOf(choice.getMessage()));
         }
-
-        CompletionsUsage usage = completions.getUsage();
-        System.out.printf("Usage: number of prompt token is %d, "
-                        + "number of completion token is %d, and number of total tokens in request and response is %d.%n",
-                usage.getPromptTokens(), usage.getCompletionTokens(), usage.getTotalTokens());
 
         return result;
     }
