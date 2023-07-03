@@ -105,8 +105,8 @@ public class AzureFileCreator extends AzureCaller {
     }
 
     public String getReadmeFile() {
-        String readmePrompt = "Could you create a separate README.md file that addresses the code generated?\n" +
-                "Surround the contents of the README.md file with '$$'";
+        String readmePrompt = "Could you create a separate README.md file that addresses the code generated, " +
+                "including instructions on how to run the code?\nSurround the contents of the README.md file with '$$'";
 
         String readmeResponse = getChatCompletion(chatMessages, readmePrompt).get(0);
 
