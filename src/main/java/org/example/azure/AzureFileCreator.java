@@ -51,10 +51,10 @@ public class AzureFileCreator extends AzureCaller {
 
         if(codeBase.complexity() != 0) {
             response = getIncreasedComplexity(codeBase);
-
-            filesWithAbsolutePath = filterResponseByRegex(response, "£(.*?)£");
-            fileContents = filterResponseByRegex(response, "\\`\\`\\`(.+?)\\`\\`\\`");
         }
+
+        filesWithAbsolutePath = filterResponseByRegex(response, "£(.*?)£");
+        fileContents = filterResponseByRegex(response, "\\`\\`\\`(.+?)\\`\\`\\`");
 
         addConfigurationFile(filesWithAbsolutePath, fileContents);
 
