@@ -1,38 +1,35 @@
 package org.example.unit.azure;
 
-import org.example.azure.AzureCaller;
 import org.example.azure.AzureFileCreator;
-import org.example.exceptions.PropertyNotFoundException;
+import org.example.models.CodeBaseRequirements;
 import org.example.properties.AzureProperties;
 import org.example.properties.PropertiesExtractor;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-import java.io.IOException;
-import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class AzureFileCreatorTest {
 
-    @Mock
-    private AzureFileCreator azureFileCreator;
-    private AzureProperties azureProperties;
-    @Before
-    public void setUp() throws PropertyNotFoundException, IOException {
-        azureProperties = new AzureProperties(PropertiesExtractor.getAzureProperties().apiKey(),
-                PropertiesExtractor.getAzureProperties().apiEndpoint(),
-                PropertiesExtractor.getAzureProperties().apiDeployment());
-        MockitoAnnotations.initMocks(this);
-        azureFileCreator = new AzureFileCreator(azureProperties);
-    }
-
-    @Test
-    public void getProgramDetails() {
-    }
-
     @Test
     public void filterResponseByRegex() {
-
+        String text = "||This|| is | a | ||piece|| of text that uses multiple $$symbols$$. ||Now with multiple|| words as well.";
+        String[] resultArray = {"This", "piece", "Now with multiple"};
+        List<String> expectedResult = new ArrayList<>(Arrays.asList(resultArray));
+        String regex = "\\|\\|(.+?)\\|\\|";
+        try {
+            AzureProperties properties = PropertiesExtractor.getAzureProperties();
+            AzureFileCreator azureFileCreator = new AzureFileCreator(properties);
+            List<String> result = azureFileCreator.filterResponseByRegex(text, regex);
+            assertEquals(expectedResult, result);
+        }
+        catch (Exception e) {
+            fail();
+        }
     }
 }

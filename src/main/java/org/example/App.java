@@ -12,6 +12,8 @@ import java.io.IOException;
 
 public class App 
 {
+    private static final String PROJECT_NAME = "testSimpleBuild";
+    private static final String ROOT_DIR = "";
     public static void main( String[] args ) throws IOException, InvalidResponseException {
         AzureProperties azureProperties = getProperties();
 
@@ -22,7 +24,7 @@ public class App
         CodeBaseRequirements userRequirements = userPrompts.build();
         AzureFileCreator azureFileCreator = new AzureFileCreator(azureProperties);
         CodeBaseBuilder codeBaseBuilder = new CodeBaseBuilder(userRequirements, azureFileCreator);
-        codeBaseBuilder.build("", "testSimpleBuild");
+        codeBaseBuilder.build(ROOT_DIR, PROJECT_NAME);
     }
 
     private static AzureProperties getProperties(){

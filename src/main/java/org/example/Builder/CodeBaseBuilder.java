@@ -34,5 +34,7 @@ public class CodeBaseBuilder {
             String fileContent = programDetails.fileContents().get(i);
             fileService.createFileAndSubFolders(filePath, fileContent);
         }
+
+        System.out.println("Code base created successfully at " + nameOfDir);
     }
 }

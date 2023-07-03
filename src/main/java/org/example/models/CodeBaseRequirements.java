@@ -7,5 +7,5 @@ package org.example.models;
  *
  * rorourke
  */
-public record CodeBaseRequirements(String language, String topic, String currentExperience, String readMeTopics, int difficulty) {
+public record CodeBaseRequirements(String language, String topic, String currentExperience, String readMeTopics, int complexity) {
 }
