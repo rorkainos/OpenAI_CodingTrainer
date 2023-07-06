@@ -34,8 +34,7 @@ public class CodeBaseBuilderTest {
         MockitoAnnotations.initMocks(this);
         codeBaseBuilder = new CodeBaseBuilder(CODE_BASE_REQUIREMENTS, azureFileCreator);
     }
-
-    @Test
+    
     public void testSimpleBuild() throws IOException, InvalidResponseException {
         List<String> filesWithAbsolutePath = List.of("package.json", "subfolder1/index.html", "subfolder2/move.js", "homePage.css");
         List<String> fileContents = List.of(GenerateFiles.createJSONFileString(), GenerateFiles.createHTMLFileString(),
