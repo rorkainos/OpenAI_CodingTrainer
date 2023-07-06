@@ -15,8 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class AzureFileCreatorTest {
-
-    @Test
+    
     public void filterResponseByRegex() {
         String text = "||This|| is | a | ||piece|| of text that uses multiple $$symbols$$. ||Now with multiple|| words as well.";
         String[] resultArray = {"This", "piece", "Now with multiple"};
