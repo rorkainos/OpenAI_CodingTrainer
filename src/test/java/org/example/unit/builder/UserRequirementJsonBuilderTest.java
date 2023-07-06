@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 public class UserRequirementJsonBuilderTest {
@@ -89,6 +89,8 @@ public class UserRequirementJsonBuilderTest {
         when(codeBaseRequirementsValidator.validateLanguage(any())).thenReturn(new AzureValidation(true, "testing validation"));
         when(codeBaseRequirementsValidator.validateReadMeTopics(any())).thenReturn(new AzureValidation(true, "testing validation"));
         when(codeBaseRequirementsValidator.validateLanguageCurrentExperience(any(), any(), any())).thenReturn(new AzureValidation(true, "testing validation"));
+        when(codeBaseRequirementsValidator.validateTopic(any(), any(), anyBoolean())).thenReturn(new AzureValidation(true, "testing validation"));
+        when(codeBaseRequirementsValidator.validateComplexity(anyInt())).thenReturn(new AzureValidation(true, "testing validation"));
 
         userRequirementJsonBuilder.setLanguage(language);
         userRequirementJsonBuilder.setReadMeTopics(readMe);

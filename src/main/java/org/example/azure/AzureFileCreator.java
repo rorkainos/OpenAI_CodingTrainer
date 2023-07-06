@@ -51,10 +51,12 @@ public class AzureFileCreator extends AzureCaller {
 
         if(codeBase.complexity() != 0) {
             response = getIncreasedComplexity(codeBase);
-
-            filesWithAbsolutePath = filterResponseByRegex(response, "£(.*?)£");
-            fileContents = filterResponseByRegex(response, "\\`\\`\\`(.+?)\\`\\`\\`");
         }
+
+        filesWithAbsolutePath = filterResponseByRegex(response, "£(.*?)£");
+        fileContents = filterResponseByRegex(response, "\\`\\`\\`(.+?)\\`\\`\\`");
+
+        addConfigurationFile(filesWithAbsolutePath, fileContents);
 
         if(!codeBase.readMeTopics().equalsIgnoreCase("no")) {
                 String readmeResponse = getReadmeFile();
@@ -103,11 +105,28 @@ public class AzureFileCreator extends AzureCaller {
     }
 
     public String getReadmeFile() {
-        String readmePrompt = "Could you create a separate README.md file that addresses the code generated?\n" +
-                "Surround the contents of the README.md file with '$$'";
+        String readmePrompt = "Could you create a separate README.md file that addresses the code generated, " +
+                "including instructions on how to run the code?\nSurround the contents of the README.md file with '$$'";
 
         String readmeResponse = getChatCompletion(chatMessages, readmePrompt).get(0);
 
         return readmeResponse;
+    }
+
+    private void addConfigurationFile(List<String> filesWithAbsolutePaths, List<String> fileContents) {
+        String prompt = "You have already provided the generated code. Please provide a configuration file for the " +
+                "generated code using the most appropriate package manager or runtime. Include any dependencies " +
+                "needed to run the project locally and outside of the browser. Surround the configuration file " +
+                "relative path with '£' and the file contents exclusively with '```'.";
+
+        String configFileInformation = getChatCompletion(chatMessages, prompt).get(0);
+        String configFileName = filterResponseByRegex(configFileInformation, "£(.*?)£").get(0);
+        String configFileContents = filterResponseByRegex(configFileInformation, "```(.+?)```").get(0);
+
+        if (configFileName != null && !configFileName.isBlank() &&
+                configFileContents != null && !configFileContents.isBlank()) {
+            filesWithAbsolutePaths.add(configFileName);
+            fileContents.add(configFileContents);
+        }
     }
 }
