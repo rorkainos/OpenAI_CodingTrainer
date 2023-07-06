@@ -89,7 +89,8 @@ public class UserRequirementJsonBuilderTest {
         when(codeBaseRequirementsValidator.validateLanguage(any())).thenReturn(new AzureValidation(true, "testing validation"));
         when(codeBaseRequirementsValidator.validateReadMeTopics(any())).thenReturn(new AzureValidation(true, "testing validation"));
         when(codeBaseRequirementsValidator.validateLanguageCurrentExperience(any(), any(), any())).thenReturn(new AzureValidation(true, "testing validation"));
-        
+        when(codeBaseRequirementsValidator.validateTopic(any(), any(), anyBoolean())).thenReturn(new AzureValidation(true, "testing validation"));
+        when(codeBaseRequirementsValidator.validateComplexity(anyInt())).thenReturn(new AzureValidation(true, "testing validation"));
 
         userRequirementJsonBuilder.setLanguage(language);
         userRequirementJsonBuilder.setReadMeTopics(readMe);
