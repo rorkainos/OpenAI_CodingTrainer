@@ -22,7 +22,6 @@ public class UserPrompt {
     public CodeBaseRequirements build(){
         this.setChosenLanguage();
         this.setChosenTopic();
-        this.setChosenTopicExperience();
         this.setChosenReadMe();
         this.setComplexity();
         return this.jsonBuilder.build();
