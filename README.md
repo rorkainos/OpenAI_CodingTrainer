@@ -1,13 +1,15 @@
 # OpenAI_CodingTrainer
 
-## Compiling the code
+## Before everything
+1. Navigate to base folder of the project.
+2. Create a file called `properties.properties`.
+3. Add the following values taken from the Azure OpenAI API
+`apiKey=exampleApiKey`
+`endpoint=exampleEndpoint`
+`deploymentName=exampleDeployment`
 
-1. Navigate to the src/main/java directory using `cd src/main/java`
-2. Run the command `javac org/example/App.java`
-3. The .class file will be created in the same directory as the App.java file
+## Compiling and running the code
 
-## Running the program
-
-1. Navigate to the src/main/java directory using `cd src/main/java`
-2. Run the command `java org.example.App --input "<prompt here>"` replacing \<prompt here\> with your prompt
-3. The program will output your prompt in the console 
+Recommended IDE: Intellij
+1. Compile the `pom.xml` file in the main directory.
+2. Run the `App.java` file in `src/main/java/org/example`.

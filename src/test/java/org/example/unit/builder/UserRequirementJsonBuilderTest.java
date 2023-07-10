@@ -2,7 +2,6 @@ package org.example.unit.builder;
 
 import org.example.Builder.UserRequirementJsonBuilder;
 import org.example.models.CodeBaseRequirements;
-import org.example.models.LearningLevel;
 import org.example.validators.AzureValidation;
 import org.example.validators.CodeBaseRequirementsValidator;
 import org.junit.Before;
@@ -10,7 +9,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 public class UserRequirementJsonBuilderTest {
@@ -56,52 +55,55 @@ public class UserRequirementJsonBuilderTest {
     }
 
     @Test
-    public void testSetUserLearningRequirementContextFail(){
-        when(codeBaseRequirementsValidator.validateLearningLevelContext(any())).thenReturn(new AzureValidation(false, "testing failed validation"));
-        assertFalse(userRequirementJsonBuilder.setLearningLevelContext("blah blah"));
+    public void testSetLanguageTopicFailed(){
+        when(codeBaseRequirementsValidator.validateLanguageCurrentExperience(any(), any(), any())).thenReturn(new AzureValidation(false, "testing validation"));
+        assertFalse(userRequirementJsonBuilder.setLanguageTopicCurrentExperience("test"));
     }
 
     @Test
-    public void testSetUserLearningRequirementContextPass(){
-        when(codeBaseRequirementsValidator.validateLearningLevelContext(any())).thenReturn(new AzureValidation(true, "testing failed validation"));
-        assertTrue(userRequirementJsonBuilder.setLearningLevelContext("context"));
+    public void testSetLanguageTopicExperiencePassed(){
+        when(codeBaseRequirementsValidator.validateLanguageCurrentExperience(any(), any(), any())).thenReturn(new AzureValidation(true, "testing validation"));
+        assertTrue(userRequirementJsonBuilder.setLanguageTopicCurrentExperience("test"));
     }
 
     @Test
-    public void testSetUserLearningRequirementLevelPass(){
-        when(codeBaseRequirementsValidator.validateLearningLevel(any())).thenReturn(new AzureValidation(true, "testing validation"));
-        assertTrue(userRequirementJsonBuilder.setLearningLevel("1"));
-    }
-    @Test
-    public void testSetUserLearningRequirementLevelFail(){
-        when(codeBaseRequirementsValidator.validateLearningLevel(any())).thenReturn(new AzureValidation(false, "testing validation"));
-        assertFalse(userRequirementJsonBuilder.setLearningLevel("-1"));
+    public void testSetDifficultyPassed() {
+        when(codeBaseRequirementsValidator.validateComplexity(2)).thenReturn(new AzureValidation(true, "testing validation"));
+        assertTrue(userRequirementJsonBuilder.setComplexity(2));
     }
 
+    @Test
+    public void testSetDifficultyFailed() {
+        when(codeBaseRequirementsValidator.validateComplexity(9)).thenReturn(new AzureValidation(false, "testing validation"));
+        assertFalse(userRequirementJsonBuilder.setComplexity(9));
+    }
 
     @Test
     public void testBuildSucceeded(){
         final String language = "node.js";
         final String readMe = "readMe";
-        final LearningLevel learningLevelNumber = LearningLevel.DEPENDENCY_MANAGEMENT;
-        final String learningLevelContext = "context";
+        final String topic = "topic";
+        final String topicExperience = "experience";
+        final int difficulty = 2;
 
         when(codeBaseRequirementsValidator.validateLanguage(any())).thenReturn(new AzureValidation(true, "testing validation"));
         when(codeBaseRequirementsValidator.validateReadMeTopics(any())).thenReturn(new AzureValidation(true, "testing validation"));
-        when(codeBaseRequirementsValidator.validateLearningLevel(any())).thenReturn(new AzureValidation(true, "testing validation"));
-        when(codeBaseRequirementsValidator.validateLearningLevelContext(any())).thenReturn(new AzureValidation(true, "testing failed validation"));
+        when(codeBaseRequirementsValidator.validateLanguageCurrentExperience(any(), any(), any())).thenReturn(new AzureValidation(true, "testing validation"));
+        when(codeBaseRequirementsValidator.validateTopic(any(), any(), anyBoolean())).thenReturn(new AzureValidation(true, "testing validation"));
+        when(codeBaseRequirementsValidator.validateComplexity(anyInt())).thenReturn(new AzureValidation(true, "testing validation"));
 
         userRequirementJsonBuilder.setLanguage(language);
         userRequirementJsonBuilder.setReadMeTopics(readMe);
-        userRequirementJsonBuilder.setLearningLevelContext(learningLevelContext);
-        userRequirementJsonBuilder.setLearningLevel(String.valueOf(learningLevelNumber.getNumber()));
-        userRequirementJsonBuilder.setLearningLevelContext(learningLevelContext);
+        userRequirementJsonBuilder.setLanguageTopic(topic, true);
+        userRequirementJsonBuilder.setLanguageTopicCurrentExperience(topicExperience);
+        userRequirementJsonBuilder.setComplexity(2);
 
         CodeBaseRequirements codeBaseRequirements = userRequirementJsonBuilder.build();
         assertNotNull(codeBaseRequirements);
-        assertEquals(language, codeBaseRequirements.getLanguage());
-        assertEquals(readMe, codeBaseRequirements.getReadMeTopics());
-        assertEquals(learningLevelContext, codeBaseRequirements.getUserLearningRequirement().getContextOfLearning());
-        assertEquals(learningLevelNumber, codeBaseRequirements.getUserLearningRequirement().getLearningLevel());
+        assertEquals(language, codeBaseRequirements.language());
+        assertEquals(readMe, codeBaseRequirements.readMeTopics());
+        assertEquals(topic, codeBaseRequirements.topic());
+        assertEquals(topicExperience, codeBaseRequirements.currentExperience());
+        assertEquals(difficulty, codeBaseRequirements.complexity());
     }
 }

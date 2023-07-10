@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 /*
  *  The responsibility of this service is to create files / folders
@@ -21,6 +23,7 @@ public final class FileService {
     public final static String DEFAULT_ROOT_FOLDER_NAME = "root";
     private final File rootFolder;
     private final String baseURL;
+    private Boolean deleteFolders;
 
     public FileService() throws IOException {
         this(DEFAULT_BASE_PATH, DEFAULT_ROOT_FOLDER_NAME);
@@ -32,6 +35,7 @@ public final class FileService {
 
     public FileService(final String baseDirectory, final String rootFolderName) throws IllegalArgumentException, IOException {
         Path directory = Paths.get(baseDirectory);
+        this.deleteFolders = false;
 
         if (!(Files.exists(directory) && Files.isDirectory(directory)))
             throw new IllegalArgumentException("Directory doesn't exist: " + baseDirectory);
@@ -42,12 +46,16 @@ public final class FileService {
 
     public void setParentFolderForDeletion(){
         this.rootFolder.deleteOnExit();
+        this.deleteFolders = true;
     }
 
 
     public File createSubFolder(final File folder, final String folderName) throws IOException {
         String newFolderStringPath = folder.getAbsolutePath() + "/" + folderName;
-        Files.createDirectory(Paths.get(newFolderStringPath));
+        Path folderPath = Paths.get(newFolderStringPath);
+
+        if(!Files.exists(folderPath) )
+            Files.createDirectory(folderPath);
 
         File subFolder = new File(newFolderStringPath);
         subFolder.createNewFile();
@@ -56,6 +64,28 @@ public final class FileService {
             throw new IOException("Something went wrong creating child folder");
 
         return subFolder;
+    }
+
+    public File createFileAndSubFolders(final String absolutePathOfFile, final String content) throws IOException {
+        String[] folders = absolutePathOfFile.split("/");
+        File currentFolder = getRootFolder();
+
+        for (int i = 0; i < folders.length - 1; i++) {
+            currentFolder = createSubFolder(currentFolder, folders[i]);
+
+            if(deleteFolders)
+                currentFolder.deleteOnExit();
+        }
+
+        File file = createFileInFolder(currentFolder, folders[folders.length - 1], content);
+        if(deleteFolders)
+            file.deleteOnExit();
+
+        return file;
+    }
+
+    private boolean deleteFolder(){
+        return this.deleteFolders;
     }
 
     public File createFileInFolder(final File folder, final String nameOfFile, final String Content) throws IOException {
